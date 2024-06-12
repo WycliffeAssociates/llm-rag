@@ -5,3 +5,4 @@ langchainhub
 chromadb
 langchain
 flask
+flask_cors
