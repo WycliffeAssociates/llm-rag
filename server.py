@@ -160,8 +160,11 @@ def send_prompt_llm(prompt: str):
 
 # ### SERVER
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 @app.route('/rag', methods=['GET'])
 def get_prompt():
