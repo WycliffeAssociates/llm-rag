@@ -5,7 +5,7 @@ LLMs demonstrated remarkable capabilities in understanding and generating human-
 
 This white paper focuses on evaluating the performance of RAG, RAG-Fusion in particular, compared to traditional LLMs. Through a detailed analysis, we aim to examine how RAG enhances the capabilities of LLMs, providing empirical evidence and practical insights into its effectiveness.
 
-The chat API we created was based on RAG-Fusion 2402.03367 (arxiv.org) technique.
+The chat API we created was based on RAG-Fusion [2402.03367 (arxiv.org)](https://arxiv.org/pdf/2402.03367) technique. 
 <diagram>
 
 ### 1. Multiple query generation
