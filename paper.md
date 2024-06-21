@@ -1,6 +1,6 @@
 # An Evaluation of Retrieval-augmented generation on Scripture Assistant
 
-Introduction
+## Introduction
 LLMs demonstrated remarkable capabilities in understanding and generating human-like text, thereby transforming various sectors including healthcare, finance, and customer service. Despite their impressive performance, LLMs face significant limitations, particularly in terms of generating factually accurate and contextually relevant information consistently.
 
 This white paper focuses on evaluating the performance of RAG, RAG-Fusion in particular, compared to traditional LLMs. Through a detailed analysis, we aim to examine how RAG enhances the capabilities of LLMs, providing empirical evidence and practical insights into its effectiveness.
@@ -43,6 +43,10 @@ For prompts with no guidance, the response came back irrelevant for most of the 
 Low guidance, ...
 High guidance, ...
 
+## Limitations
+One of the biggest drawbacks when using RAG Fusion, as outlined in the [paper](https://arxiv.org/pdf/2402.03367), is the performance. Traditional LLMs queries normally take a fraction of the delay of RAG responses. This is due to the additional query generation step and the embedded context documents to the second query to the LLM.
+
+## Future work
 
 ## Conclusion
 By providing a thorough assessment of RAG's performance, this white paper seeks to contribute to the ongoing discourse on enhancing AI-driven text generation. It aims to equip stakeholders with the knowledge and insights necessary to make informed decisions about adopting and implementing RAG in their AI systems.
