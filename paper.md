@@ -5,28 +5,43 @@ LLMs demonstrated remarkable capabilities in understanding and generating human-
 
 This white paper focuses on evaluating the performance of RAG, RAG-Fusion in particular, compared to traditional LLMs. Through a detailed analysis, we aim to examine how RAG enhances the capabilities of LLMs, providing empirical evidence and practical insights into its effectiveness.
 
-
 The chat API we created was based on RAG-Fusion technique. 
 <diagram>
 
-The three major components are:
-
-### 1. Query generation
-
+### 1. Multiple query generation
+This approach leverages different variations of the original query to improve the retrieval quality. The query is first sent to the LLM to generate several sub-queries with similar interest. The template for generating multiple queries defines as: 
+```
+You are a helpful assistant that generates multiple search queries based on a single input query. \n
+Generate multiple search queries related to: {question} \n
+Output (4 queries):
+```
+The generated queries along with the original will be forwarded to the next step: retrieval.
 
 ### 2. Context Retrieval
-
+Vector database is a crucial component of RAG. It enables the retrieval mechanism to gather relevant information which is known as "context" that enhances the generation process of LLMs. In this paper, we use Chroma vector database to manage the data sources for our RAG system. We outline the database construction as follow:
+- Data sources preparation and standardization.
+- Embedding: we use OpenAI text embedding model that converts text data into multi-dimensional vectors. These vectors are indexed and linked with relevant metadata.
+- Retrieval: each query will be converted to a vector space which will be used to search for similar vectors in the database. For improved efficiency, multiple queries are executed in parallel. The results will be returned as a collection of documents with the highest similarity scores.
 
 ### 3. Context Ranking
+We followed RAG-Fusion approach by performing reciprocal rank fusion (RRF). This is a common technique used in evaluating and ranking the search results based on the computed scores.
+<formula>
 
+After the result set is ranked by descending similarity, the top-n documents along with the original query are sent to the LLM in a formatted prompt.
+```
+Answer the following question based on this context:    
+{context}.
 
-## Prompt engineering - Guidance conditions
+Question: {question}
+```
 
-### No Guidance
+### Prompt Engineering - Guidance conditions
 
-### Low Guidance
+Prompt engineering involves constructing and refining the input prompts given to LLMs to "steer" the response toward desirable output. In the context of RAG, this also means guiding the LLM generation toward the most relevant information and reducing the probability of irrelevant information. [2310.03184 (arxiv.org)](https://arxiv.org/pdf/2310.03184) describes the relevance of the response to the retrieval context as groundedness. 
 
-### High Guidance
+For prompts with no guidance, the response came back irrelevant for most of the in-depth questions about a specific domain.
+Low guidance, ...
+High guidance, ...
 
 
 ## Conclusion
