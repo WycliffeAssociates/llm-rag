@@ -42,15 +42,37 @@ Prompt engineering involves constructing and refining the input prompts given to
 For prompts with traditional LM, the responses for in-depth questions about a specific domain are more likely to be irrelevant or out-of-scope. Taking the following prompt as an example:
 
 **Question**: Who is Stephen?  
-**LM**: Stephen is a common English given name that is of Greek origin, meaning “crown” or “wreath.” It has been borne by many notable individuals throughout history, including Saint Stephen, the first Christian martyr, and Stephen Hawking, the renowned theoretical physicist.  
+
+**LM**: Stephen is a common English given name that is of Greek origin, meaning “crown” or “wreath.” It has been borne by many notable individuals throughout history, including Saint Stephen, the first Christian martyr, and Stephen Hawking, the renowned theoretical physicist. 
+
 **RAG**: Stephen is a character mentioned in the context provided. He is described as being full of grace and power, doing great wonders and signs among the people. He is also shown to be involved in debates with certain people and eventually brought before a council.
 
-Since the LM has not been introduced with the context of Stephen in the Scripture, it has no clue about which Stephen the prompt is referring to. When the context is presented, RAG's response brought up a more relevant answer because it has learned the content provided with the prompt.
+**Explanation**: Since the LM has not been introduced with the context of Stephen in the Scripture, it has no clue about which Stephen the prompt is referring to. When the context is presented, RAG's response brought up a more relevant answer because it has learned the content provided with the prompt.
 More prompt examples are noted below when evaluating LM and RAG.
 
 **Question**: What did Jesus say about the Holy Spirit?  
+
 **LM**: Jesus spoke about the Holy Spirit in the Bible, particularly in the Gospel of John. He referred to the Holy Spirit as the Advocate or Comforter who would be sent by God to guide and empower believers. Jesus also promised that the Holy Spirit would teach and remind his followers of his teachings, and would testify about him. Overall, Jesus emphasized the importance of the Holy Spirit in the lives of believers for guidance, comfort, and empowerment.  
+
 **RAG**: Jesus said that the Holy Spirit would come upon his disciples to empower them and be their Comforter. He also mentioned that the Holy Spirit is the Spirit of truth who tells God's people what is true about God so they can know Him better and serve Him well.
+
+**Question**: What is truth? 
+
+**LM**: Truth is the quality or state of being in accordance with fact or reality. It is the accurate representation of what is real or true. Truth is often considered to be objective and independent of personal beliefs or opinions.
+
+**RAG**: The concept of truth can be understood in different contexts. In the Bible, truth is often associated with God's Word and His promises. Jesus himself claimed to be "the way, the truth, and the life" (John 14:6), emphasizing the importance of truth in the Christian faith. Truth can also refer to the reliability and accuracy of information, as well as the alignment of beliefs with reality. Ultimately, truth is a foundational principle that guides beliefs, actions, and relationships.
+
+**Question**: How do I atone for my sins?
+
+**LM**: Atoning for your sins can involve several steps, depending on your beliefs and the nature of your actions. Here are some general steps you can consider:. Acknowledge your sins: Recognize and take responsibility for your actions. Reflect on how your actions have impacted others and yourself. Seek forgiveness: Apologize to those you have wronged and ask for their forgiveness. This can help repair relationships and show your sincerity in wanting to make amends. Make amends: Take actions to make up for the harm you have caused. This could involve restitution, community service, or other ways to positively impact those affected by your actions. Change your behavior: Commit to making positive changes in your life to prevent repeating the same mistakes. This may involve seeking counseling, therapy, or support from others. Practice self-forgiveness: It's important to forgive yourself for your mistakes and learn from them. Holding onto guilt and shame can hinder your ability to move forward and grow. Remember that atonement is a personal journey and may look different for each individual. It's important to seek guidance from your faith tradition, spiritual leaders, or counselors if you need additional support in atoning for your sins.
+
+**RAG**: To atone for sins according to the passages provided, one must first confess the sin that has been committed. Then, the guilty person must pay back the price of their guilt and add one-fifth more to it. If the wronged person has no close relative to receive the payment, the guilty person must pay the price for their guilt to the priest, along with a ram to atone for themselves. Additionally, offerings and sacrifices can be made to Yahweh for the forgiveness of sins. It is important to acknowledge one's transgressions, seek forgiveness, and make restitution as outlined in the passages.
+
+**Question**: Will I go to Hell if I am a good person but don't believe that Jesus is God?
+
+**LM**: As an AI, I cannot provide religious or spiritual advice. Beliefs about salvation and the afterlife vary among different religions and denominations. It is important to explore and understand the teachings of your own faith tradition or seek guidance from a religious leader or counselor for a more personalized answer to this question.
+
+**RAG**: Based on the content provided, it is important to note that beliefs about Jesus being God are central to Christian theology. In the Christian faith, salvation is believed to come through faith in Jesus Christ as the Son of God and Savior. The passages emphasize the importance of faith in Christ for salvation and the consequences of unbelief. In the Christian perspective presented in the passages, it is suggested that faith in Jesus Christ is necessary for salvation. The belief that Jesus is the Son of God who suffered for the sins of humanity and was raised to life is a fundamental aspect of Christian faith. The passages also mention the consequences of unbelief, such as suffering and judgment. Therefore, according to the Christian beliefs reflected in the passages, faith in Jesus Christ as the Son of God is considered essential for salvation. Failure to believe in Jesus as God may have implications for one's spiritual destiny based on the Christian worldview presented in the text.
 
 
 ## Limitations
