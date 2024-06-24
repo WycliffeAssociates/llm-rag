@@ -68,12 +68,13 @@ More prompt examples are noted below when evaluating LM and RAG.
 
 **RAG**: To atone for sins according to the passages provided, one must first confess the sin that has been committed. Then, the guilty person must pay back the price of their guilt and add one-fifth more to it. If the wronged person has no close relative to receive the payment, the guilty person must pay the price for their guilt to the priest, along with a ram to atone for themselves. Additionally, offerings and sacrifices can be made to Yahweh for the forgiveness of sins. It is important to acknowledge one's transgressions, seek forgiveness, and make restitution as outlined in the passages.
 
+**Explanation**: The RAG answer gives this response due to what documents are being retrieved and used as context. Since it seems to be pulling from the Old Testament, it generates it's answer based on the Old Testament text. 
+
 **Question**: Will I go to Hell if I am a good person but don't believe that Jesus is God?
 
 **LM**: As an AI, I cannot provide religious or spiritual advice. Beliefs about salvation and the afterlife vary among different religions and denominations. It is important to explore and understand the teachings of your own faith tradition or seek guidance from a religious leader or counselor for a more personalized answer to this question.
 
 **RAG**: Based on the content provided, it is important to note that beliefs about Jesus being God are central to Christian theology. In the Christian faith, salvation is believed to come through faith in Jesus Christ as the Son of God and Savior. The passages emphasize the importance of faith in Christ for salvation and the consequences of unbelief. In the Christian perspective presented in the passages, it is suggested that faith in Jesus Christ is necessary for salvation. The belief that Jesus is the Son of God who suffered for the sins of humanity and was raised to life is a fundamental aspect of Christian faith. The passages also mention the consequences of unbelief, such as suffering and judgment. Therefore, according to the Christian beliefs reflected in the passages, faith in Jesus Christ as the Son of God is considered essential for salvation. Failure to believe in Jesus as God may have implications for one's spiritual destiny based on the Christian worldview presented in the text.
-
 
 ## Limitations
 One of the biggest drawbacks when using RAG Fusion, as outlined in [paper](https://arxiv.org/pdf/2402.03367), is performance gap. Traditional LLMs queries normally take a fraction of the delay of RAG responses. This is due to the additional query generation step and the embedded context documents to the second query to the LLM.
