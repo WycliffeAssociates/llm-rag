@@ -6,7 +6,7 @@ LLMs demonstrated remarkable capabilities in understanding and generating human-
 This white paper focuses on evaluating the performance of RAG, RAG-Fusion in particular, compared to traditional LLMs. Through a detailed analysis, we aim to examine how RAG enhances the capabilities of LLMs, providing empirical evidence and practical insights into its effectiveness.
 
 The chat API we created was based on RAG-Fusion [2402.03367 (arxiv.org)](https://arxiv.org/pdf/2402.03367) technique. 
-![diagram](https://raw.githubusercontent.com/AnonymousWalker/rag-langchain/doc/image.png)
+![enter image description here](https://raw.githubusercontent.com/AnonymousWalker/rag-langchain/doc/image.png)
 
 ### 1. Prompt generation
 This technique leverages different variations of the original query to improve the retrieval quality. The query is first sent to the LLM to generate several sub-queries with similar interest. The template for generating multiple queries defines as: 
@@ -22,6 +22,7 @@ Vector database is a crucial component of RAG. It enables the retrieval mechanis
 - Data sources preparation and standardization.
 - Embedding: we use OpenAI text embedding model that converts text data into multi-dimensional vectors. These vectors are indexed and linked with relevant metadata.
 - Retrieval: each query will be converted to a vector space which will be used to search for similar vectors in the database. For improved efficiency, multiple queries are executed in parallel. The results will be returned as a collection of documents with the highest similarity scores.
+![Vector Database](https://github.com/AnonymousWalker/rag-langchain/blob/doc/vector-db.png?raw=true)
 
 ### 3. Context Ranking
 We followed RAG-Fusion approach by performing reciprocal rank fusion (RRF) against the list of retrieved documents [RRF](https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking). This algorithm is commonly used in evaluating and ranking the search results based on the computed scores. The idea is that the top documents returned from across multiple queries are usually more relevant and should be ranked higher in the aggregated result.
