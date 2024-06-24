@@ -1,7 +1,7 @@
 # An Evaluation of Retrieval-augmented generation on Scripture Assistant
 
 ## Introduction
-LLMs demonstrated remarkable capabilities in understanding and generating human-like text, thereby transforming various sectors including healthcare, finance, and customer service. Despite their impressive performance, LLMs face significant limitations, particularly in terms of generating factually accurate and contextually relevant information consistently.
+Large Language Model (LLM) demonstrated remarkable capabilities in understanding and generating human-like text, thereby transforming various sectors including healthcare, finance, and customer service. Despite their impressive performance, LLMs face significant limitations, particularly in terms of generating factually accurate and contextually relevant information consistently.
 
 This white paper focuses on evaluating the performance of RAG, RAG-Fusion in particular, compared to traditional LLMs. Through a detailed analysis, we aim to examine how RAG enhances the capabilities of LLMs, providing empirical evidence and practical insights into its effectiveness.
 
