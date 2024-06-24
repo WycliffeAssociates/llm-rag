@@ -66,7 +66,9 @@ By introducing a logical routing step for each retrieval, we could direct querie
 ### RAPTOR
 Given the hyperlinked structure of the Bible, if a question involves a topic that evolves over the span of multiple books, retrieving the top-k documents for a question is not always enough. One way to increase the relevance of retrieved documents in these cases is to implement RAPTOR as specified here in [paper](https://arxiv.org/pdf/2401.18059). 
 
-RAPTOR (Recursive Abstractive Processing for Tree-Organized Retrieval) improves document retrieval by organizing the content like a tree, summarizing information from related sections, and then adding those summaries to the database. This method helps find more relevant answers for complex questions by considering the connections between different parts of the text.
+RAPTOR (Recursive Abstractive Processing for Tree-Organized Retrieval) improves document retrieval by organizing the content like a tree, summarizing information from related sections, and then adding those summaries to the database. This method helps find more relevant answers for complex questions by allowing high-level summaries of documents to be retrieved and used as context when generating a response. 
+
+
 
 
 ## Conclusion
