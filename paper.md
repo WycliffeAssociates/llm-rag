@@ -42,16 +42,15 @@ Prompt engineering involves constructing and refining the input prompts given to
 For prompts with traditional LM, the responses for in-depth questions about a specific domain are more likely to be irrelevant or out-of-scope. Taking the following prompt as an example:
 
 **Question**: Who is Stephen?  
-**LM**: Stephen is a common English given name that is of Greek origin, meaning “crown” or “wreath.” It has been borne by many notable individuals throughout history, including Saint Stephen, the first Christian martyr, and Stephen Hawking, the renowned theoretical physicist.
+**LM**: Stephen is a common English given name that is of Greek origin, meaning “crown” or “wreath.” It has been borne by many notable individuals throughout history, including Saint Stephen, the first Christian martyr, and Stephen Hawking, the renowned theoretical physicist.  
 **RAG**: Stephen is a character mentioned in the context provided. He is described as being full of grace and power, doing great wonders and signs among the people. He is also shown to be involved in debates with certain people and eventually brought before a council.
 
 Since the LM has not been introduced with the context of Stephen in the Scripture, it has no clue about which Stephen the prompt is referring to. When the context is presented, RAG's response brought up a more relevant answer because it has learned the content provided with the prompt.
-More prompt examples are noted below when evaluating LM and RAG:
+More prompt examples are noted below when evaluating LM and RAG.
 
-**Q**: What did Jesus say about the Holy Spirit?
-**LLM**: Jesus spoke about the Holy Spirit in the Bible, particularly in the Gospel of John. He referred to the Holy Spirit as the Advocate or Comforter who would be sent by God to guide and empower believers. Jesus also promised that the Holy Spirit would teach and remind his followers of his teachings, and would testify about him. Overall, Jesus emphasized the importance of the Holy Spirit in the lives of believers for guidance, comfort, and empowerment.
+**Question**: What did Jesus say about the Holy Spirit?  
+**LM**: Jesus spoke about the Holy Spirit in the Bible, particularly in the Gospel of John. He referred to the Holy Spirit as the Advocate or Comforter who would be sent by God to guide and empower believers. Jesus also promised that the Holy Spirit would teach and remind his followers of his teachings, and would testify about him. Overall, Jesus emphasized the importance of the Holy Spirit in the lives of believers for guidance, comfort, and empowerment.  
 **RAG**: Jesus said that the Holy Spirit would come upon his disciples to empower them and be their Comforter. He also mentioned that the Holy Spirit is the Spirit of truth who tells God's people what is true about God so they can know Him better and serve Him well.
-
 
 
 ## Limitations
