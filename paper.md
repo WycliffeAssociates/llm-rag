@@ -59,7 +59,15 @@ One of the biggest drawbacks when using RAG Fusion, as outlined in [paper](https
 ## Future work
 
 ### Logical Routing
-Our implementation of RAG currently uses a single vector database that contains the English, Spanish, and Vietnamese ULB and Translation Notes, as well as the Spanish and Vietnamese Translation Questions. To potentially improve the quality of the retrieved documents, we could split our monolithic database into several smaller, specialized databases. By introducing a logical routing step for each retrieval, we could direct queries to the most relevant database. Although this would increase the run-time for each query, it could enhance the relevance of the retrieved documents by reducing the retrieval of duplicate passages that are in different languages.
+Our implementation of RAG currently uses a single vector database that contains the English, Spanish, and Vietnamese ULB and Translation Notes, as well as the Spanish and Vietnamese Translation Questions. To potentially improve the quality of the retrieved documents, we could split our monolithic database into several smaller, specialized databases. 
+
+By introducing a logical routing step for each retrieval, we could direct queries to the most relevant database. Although this would increase the run-time for each query, it could enhance the relevance of the retrieved documents by reducing the retrieval of duplicate passages that are in different languages.
+
+### RAPTOR
+Given the hyperlinked structure of the Bible, if a question involves a topic that evolves over the span of multiple books, retrieving the top-k documents for a question is not always enough. One way to increase the relevance of retrieved documents in these cases is to implement RAPTOR as specified here in [paper](https://arxiv.org/pdf/2401.18059). 
+
+RAPTOR (Recursive Abstractive Processing for Tree-Organized Retrieval) improves document retrieval by organizing the content like a tree, summarizing information from related sections, and then adding those summaries to the database. This method helps find more relevant answers for complex questions by considering the connections between different parts of the text.
+
 
 ## Conclusion
 By providing a thorough assessment of RAG's performance, this white paper seeks to contribute to the ongoing discourse on enhancing AI-driven text generation. It aims to equip stakeholders with the knowledge and insights necessary to make informed decisions about adopting and implementing RAG in their AI systems.
