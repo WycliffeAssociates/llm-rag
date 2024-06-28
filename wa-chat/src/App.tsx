@@ -70,8 +70,8 @@ const App = () => {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Typography variant="h3" align="center" gutterBottom>
-          WA Chat
+        <Typography variant="h4" align="center" gutterBottom>
+          LLM vs. RAG
         </Typography>
       </Grid>
 
@@ -102,14 +102,14 @@ const App = () => {
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12} sm={5}>
           <Typography variant="h5" align="center" gutterBottom>
-            LLM
+            ChatGPT
           </Typography>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <TextField
               id="llmOutput"
               variant="outlined"
               multiline
-              rows={6}
+              rows={10}
               fullWidth
               value={llmOutput}
               InputProps={{
@@ -123,14 +123,14 @@ const App = () => {
         </Grid>
         <Grid item xs={12} sm={5}>
           <Typography variant="h5" align="center" gutterBottom>
-            LLM + RAG
+            RAG
           </Typography>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <TextField
               id="ragOutput"
               variant="outlined"
               multiline
-              rows={6}
+              rows={10}
               fullWidth
               value={ragOutput}
               InputProps={{
