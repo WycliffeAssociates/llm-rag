@@ -4,14 +4,15 @@ os.environ['LANGCHAIN_TRACING_V2'] = 'true'
 os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
 os.environ['LANGCHAIN_API_KEY'] = ''
 os.environ['OPENAI_API_KEY'] = ''
+
 # ### Vector Store DB & Retriever
-db_path = "D:/misc/rag/chroma_db_main"
+db_path = "D:/misc/rag/rag-db"
 
 #### INDEXING ####
 import bs4
 from langchain_community.document_loaders import TextLoader
 
-# docs = []
+docs = []
 # loader = TextLoader("D:/misc/rag/data/es_ulb.txt", encoding="UTF-8")
 # docs = docs + loader.load()
 # loader = TextLoader("D:/misc/rag/data/es_tn.md", encoding="UTF-8")
@@ -24,32 +25,43 @@ from langchain_community.document_loaders import TextLoader
 # docs = docs + loader.load()
 # loader = TextLoader("D:/misc/rag/data/vi_tq.md", encoding="UTF-8")
 # docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/en_ulb.txt", encoding="UTF-8")
-# docs = docs + loader.load()
+loader = TextLoader("D:/misc/rag/data/en_ulb.txt", encoding="UTF-8")
+docs = docs + loader.load()
 # loader = TextLoader("D:/misc/rag/data/en_tn.md", encoding="UTF-8")
 # docs = docs + loader.load()
 
 # # Split
-# from langchain.text_splitter import RecursiveCharacterTextSplitter
-# text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-#     chunk_size=300, 
-#     chunk_overlap=50)
+from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
+text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+    chunk_size=300, 
+    chunk_overlap=50)
+# Make splits
+splits = text_splitter.split_documents(docs)
 
-# # Make splits
-# splits = text_splitter.split_documents(docs)
+md_docs = []
+headers_to_split = [("#", "Word Name"), ("##", "Content")]
+md_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split, strip_headers=False)
+
+# LOAD .md FILES FROM DIR
+input_dir = r"D:\misc\rag\data\en_tw"
+files = os.listdir(input_dir)
+for file_name in files:
+    file_path = os.path.join(input_dir, file_name)
+    if os.path.isfile(file_path):  # Check if it's a file (not a directory)
+        with open(file_path, encoding="UTF-8", mode='r') as f:
+            md = f.read()
+            splits = splits + md_splitter.split_text(md)
+
 
 # Index
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-# vectorstore = Chroma.from_documents(documents=splits, 
-#                                     embedding=OpenAIEmbeddings())
-db_path = "D:/misc/rag/chroma_db_main"
 
-vectorstore = Chroma(persist_directory=db_path, 
-                                    embedding_function=OpenAIEmbeddings())
+# vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=OpenAIEmbeddings())
+vectorstore = Chroma(persist_directory=db_path, embedding_function=OpenAIEmbeddings())
 
 
-retriever = vectorstore.as_retriever(search_kwargs={"k": 1})
+retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 6, 'lambda_mult': 0.25})
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
