@@ -12,56 +12,16 @@ db_path = "D:/misc/rag/rag-db"
 import bs4
 from langchain_community.document_loaders import TextLoader
 
-docs = []
-# loader = TextLoader("D:/misc/rag/data/es_ulb.txt", encoding="UTF-8")
-# docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/es_tn.md", encoding="UTF-8")
-# docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/es_tq.md", encoding="UTF-8")
-# docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/vi_ulb.txt", encoding="UTF-8")
-# docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/vi_tn.md", encoding="UTF-8")
-# docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/vi_tq.md", encoding="UTF-8")
-# docs = docs + loader.load()
-loader = TextLoader("D:/misc/rag/data/en_ulb.txt", encoding="UTF-8")
-docs = docs + loader.load()
-# loader = TextLoader("D:/misc/rag/data/en_tn.md", encoding="UTF-8")
-# docs = docs + loader.load()
-
-# # Split
-from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
-text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-    chunk_size=300, 
-    chunk_overlap=50)
-# Make splits
-splits = text_splitter.split_documents(docs)
-
-md_docs = []
-headers_to_split = [("#", "Word Name"), ("##", "Content")]
-md_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split, strip_headers=False)
-
-# LOAD .md FILES FROM DIR
-input_dir = r"D:\misc\rag\data\en_tw"
-files = os.listdir(input_dir)
-for file_name in files:
-    file_path = os.path.join(input_dir, file_name)
-    if os.path.isfile(file_path):  # Check if it's a file (not a directory)
-        with open(file_path, encoding="UTF-8", mode='r') as f:
-            md = f.read()
-            splits = splits + md_splitter.split_text(md)
-
-
 # Index
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from database import create_db
 
 # vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=OpenAIEmbeddings())
+# vectorstore = create_db(db_path)
 vectorstore = Chroma(persist_directory=db_path, embedding_function=OpenAIEmbeddings())
 
-
-retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 6, 'lambda_mult': 0.25})
+retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 5, 'lambda_mult': 0.25})
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
@@ -77,7 +37,7 @@ def format_docs(docs):
 #   -------------- EXECUTION ------------
 def send_prompt_rag_plain(question: str):
     # Prompt
-    template = """Answer the question with following context:
+    template = """Answer the question given following context:
     {context}
 
     Question: {question}
