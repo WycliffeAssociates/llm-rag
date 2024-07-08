@@ -6,7 +6,7 @@ os.environ['LANGCHAIN_API_KEY'] = ''
 os.environ['OPENAI_API_KEY'] = ''
 
 # ### Vector Store DB & Retriever
-db_path = "D:/misc/rag/rag-db"
+db_path = "D:/misc/rag/rag-db-v2"
 
 #### INDEXING ####
 import bs4
@@ -68,22 +68,41 @@ def send_prompt_llm(prompt: str):
     ]
     return llm.invoke(messages).content
 
+def extract_keywords(prompt: str):
+    messages = [
+        ("system", "Extract the keywords from the user prompt and order them by the terminology. The response should contain only comma-separated strings."),
+        ("user", prompt)
+    ]
+    raw_keywords = llm.invoke(messages).content.split(',')
+    keywords = [s.strip() for s in raw_keywords]
+    return keywords
+
 
 # ### SERVER
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
+from glossary import create_glossary
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+dictionary = create_glossary(r'D:\misc\rag\data\en_tw')
 
 @app.route('/rag', methods=['GET'])
 def get_prompt():
     prompt = request.args.get('prompt', default='', type=str)
+    keywords = extract_keywords(prompt)
+    
+    tw_dict = {}
+    for k in keywords:
+        found = dictionary.get(k.lower(), '')
+        if found != '':
+            tw_dict[k] = found
 
     response = {
         'rag-response:' : send_prompt_rag_plain(prompt),
-        'llm-response': send_prompt_llm(prompt)
+        'llm-response': send_prompt_llm(prompt),
+        'keywords': keywords,
+        'tw': tw_dict
     }
     return jsonify(response)
 

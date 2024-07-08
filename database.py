@@ -6,7 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHead
 
 def create_db(db_path):
     docs = []
-    loader = TextLoader("D:/misc/rag/data/en_ulb.txt", encoding="UTF-8")
+    loader = TextLoader("D:/misc/rag/data/en_ulb_verses.txt", encoding="UTF-8")
     docs = docs + loader.load()
 
     # # Split

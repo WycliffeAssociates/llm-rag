@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Grid, TextField, Button, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import Markdown from 'react-markdown'
 
 const App = () => {
   const [userInput, setUserInput] = useState('');
@@ -9,10 +10,14 @@ const App = () => {
   const [context, setContext] = useState('');
   const [llmOutput, setLlmOutput] = useState('');
   const [ragOutput, setRagOutput] = useState('');
+  const [keywords, setKeyWords] = useState({});
   const [expanded, setExpanded] = useState(false);
   const [dialogContent, setDialogContent] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
+  const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const [glossaryContent, setGlossaryContent] = useState('');
+
 
   const fetchData = async (prompt: string) => {
     try {
@@ -28,6 +33,7 @@ const App = () => {
 
       setLlmOutput(result['llm-response']);
       setRagOutput(result['rag-response:'].response);
+      setKeyWords(result['tw']);
 
       const combinedContext = result['rag-response:'].context
       if(typeof(combinedContext) !== "string"){
@@ -65,6 +71,16 @@ const App = () => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setDialogContent('');
+  };
+
+  const handleOpenGlossary = (content: React.SetStateAction<string>) => {
+    setGlossaryContent(content);
+    setGlossaryOpen(true);
+  }
+
+  const handleCloseGlossary = () => {
+    setGlossaryOpen(false);
+    setGlossaryContent('');
   };
 
   return (
@@ -143,7 +159,13 @@ const App = () => {
           </div>
         </Grid>
       </Grid>
-
+      <Grid container spacing={2} justifyContent="center" style={{ margin: '10px', gap: '20px' }}>
+        {Object.entries(keywords).map(([key, _], index) => (
+              <a href={`javascript:void(0)`} onClick={() => handleOpenGlossary(keywords[key])}>
+                  {key}
+                </a>
+          ))}
+      </Grid>
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={10} style={{ marginTop: '20px' }}>
           <Accordion expanded={expanded} onChange={handleAccordionToggle}>
@@ -190,7 +212,17 @@ const App = () => {
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
-            {dialogContent}
+              {dialogContent}
+          </Typography>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog id="glossary-view" open={glossaryOpen} onClose={handleCloseGlossary} fullWidth maxWidth="lg">
+        <DialogContent>
+          <Typography variant="body1">
+            <Markdown>
+              {glossaryContent}
+            </Markdown>
           </Typography>
         </DialogContent>
       </Dialog>
