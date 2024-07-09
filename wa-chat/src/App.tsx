@@ -74,7 +74,10 @@ const App = () => {
   };
 
   const handleOpenGlossary = (content: React.SetStateAction<string>) => {
-    setGlossaryContent(content);
+    // removes urls from markdown text 
+    const body = content.toString().replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+    console.log(body)
+    setGlossaryContent(body);
     setGlossaryOpen(true);
   }
 
