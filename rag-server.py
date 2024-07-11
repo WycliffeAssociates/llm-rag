@@ -1,12 +1,16 @@
 # ! pip install langchain_community tiktoken langchain-openai langchainhub chromadb langchain flask
 import os
-os.environ['LANGCHAIN_TRACING_V2'] = 'true'
-os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
-os.environ['LANGCHAIN_API_KEY'] = ''
-os.environ['OPENAI_API_KEY'] = ''
+import json
+
+with open('config.json', 'r') as conf:
+    config = json.load(conf)
+
+OPENAI_KEY = config['OPENAI_API_KEY']
 
 # ### Vector Store DB & Retriever
-db_path = "D:/misc/rag/rag-db-v2"
+db_path = config["DB_PATH"]
+data_source_dir = config["DATA_SOURCE_DIR"]
+glossary_dir = config["GLOSSARY_DIR"]
 
 #### INDEXING ####
 import bs4
@@ -17,9 +21,14 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from database import create_db
 
-# vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=OpenAIEmbeddings())
-# vectorstore = create_db(db_path)
-vectorstore = Chroma(persist_directory=db_path, embedding_function=OpenAIEmbeddings())
+embedding = OpenAIEmbeddings(api_key=OPENAI_KEY)
+if os.path.exists(db_path):
+    print(f"Database found at {db_path}")
+    # vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=OpenAIEmbeddings())
+    vectorstore = Chroma(persist_directory=db_path, embedding_function=embedding)
+else:
+    print(f"Constructing database at {db_path}")
+    vectorstore = create_db(db_path, data_source_dir, embedding)
 
 retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 5, 'lambda_mult': 0.25})
 
@@ -28,7 +37,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
-llm = ChatOpenAI(temperature=0)
+llm = ChatOpenAI(temperature=0, api_key=OPENAI_KEY)
 
 # Post-processing
 def format_docs(docs):
@@ -85,7 +94,7 @@ from glossary import create_glossary
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-dictionary = create_glossary(r'D:\misc\rag\data\en_tw')
+dictionary = create_glossary(glossary_dir)
 
 @app.route('/rag', methods=['GET'])
 def get_prompt():
