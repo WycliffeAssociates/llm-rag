@@ -163,11 +163,11 @@ const App = () => {
         </Grid>
       </Grid>
       <Grid container spacing={2} justifyContent="center" style={{ margin: '10px', gap: '20px' }}>
-        {Object.entries(keywords).map(([key, _], index) => (
+        {keywords ? Object.entries(keywords).map(([key, _], index) => (
               <a href={`javascript:void(0)`} onClick={() => handleOpenGlossary(keywords[key])}>
                   {key}
                 </a>
-          ))}
+          )) : <></>}
       </Grid>
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={10} style={{ marginTop: '20px' }}>
