@@ -15,6 +15,8 @@ def create_glossary(directory):
                 with open(file_path, encoding="UTF-8", mode='r') as f:
                     text = f.read()
                 level_1_headings = re.findall(r'^#\s+(.*)', text)
-                tw_map[str(level_1_headings[0]).lower()] = text
+                words = str(level_1_headings[0]).lower()
+                for w in words.split(','):
+                    tw_map[w.strip()] = text
 
     return tw_map

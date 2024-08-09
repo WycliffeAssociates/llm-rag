@@ -46,7 +46,11 @@ def format_docs(docs):
 #   -------------- EXECUTION ------------
 def send_prompt_rag_plain(question: str):
     # Prompt
-    template = """Answer the question given following context:
+    # template = """Answer the question given following context:
+    template = """
+    "You are an evangelical Christian with traditional beliefs about God, doctrine, and the Bible. 
+    However, do not preface your responses with your persona.
+    Answer the question and use the following context when applicable:
     {context}
 
     Question: {question}
@@ -79,12 +83,20 @@ def send_prompt_llm(prompt: str):
 
 def extract_keywords(prompt: str):
     messages = [
-        ("system", "Extract the keywords from the user prompt and order them by the terminology. The response should contain only comma-separated strings."),
+        ("system", """
+Extract the keywords from the user prompt. 
+The response should be a json object with two fields - a list of keywords and a language code of the prompt as `language_code`.
+Prompt:
+"""),
         ("user", prompt)
     ]
-    raw_keywords = llm.invoke(messages).content.split(',')
-    keywords = [s.strip() for s in raw_keywords]
-    return keywords
+    response = llm.invoke(messages).content
+    response_obj = json.loads(response)
+    raw_keywords = response_obj["keywords"]
+    language = str(response_obj["language_code"])
+    keywords = [str(s).strip() for s in raw_keywords]
+    
+    return keywords, language
 
 
 # ### SERVER
@@ -94,13 +106,25 @@ from glossary import create_glossary
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-dictionary = create_glossary(glossary_dir)
+
+en_dictionary = create_glossary(r"D:\misc\rag\data\data_sources\en_tw")
+es_dictionary = create_glossary(r"D:\misc\rag\data\data_sources\es_tw")
+vi_dictionary = create_glossary(r"D:\misc\rag\data\data_sources\vi_tw")
 
 @app.route('/rag', methods=['GET'])
 def get_prompt():
     prompt = request.args.get('prompt', default='', type=str)
-    keywords = extract_keywords(prompt)
-    
+    keywords, language = extract_keywords(prompt)
+
+    if language == "en":
+        dictionary = en_dictionary
+    elif language == "es":
+        dictionary = es_dictionary
+    elif language == "vi":
+        dictionary = vi_dictionary
+    else:
+        dictionary = {}
+
     tw_dict = {}
     for k in keywords:
         found = dictionary.get(k.lower(), '')
@@ -109,7 +133,7 @@ def get_prompt():
 
     response = {
         'rag-response:' : send_prompt_rag_plain(prompt),
-        'llm-response': send_prompt_llm(prompt),
+        'llm-response': '',#send_prompt_llm(prompt),
         'keywords': keywords,
         'tw': tw_dict
     }
