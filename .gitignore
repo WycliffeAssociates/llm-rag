@@ -1,3 +1,5 @@
 venv/
+.venv/
 .vscode/
 __pycache__/
+.venv/Lib/site-packages/aiohttp/http_writer.py
