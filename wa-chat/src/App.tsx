@@ -5,7 +5,8 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import Markdown from 'react-markdown'
 
 const App = () => {
-  const [userInput, setUserInput] = useState('');
+  const [userPrompt, setUserPrompt] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState('You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona.');
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState('');
   const [llmOutput, setLlmOutput] = useState('');
@@ -19,14 +20,16 @@ const App = () => {
   const [glossaryContent, setGlossaryContent] = useState('');
 
 
-  const fetchData = async (prompt: string) => {
+  const fetchData = async (prompt: string, systemPrompt: string) => {
     try {
 
-      const response = await fetch(`http://localhost:5000/rag?prompt=${encodeURIComponent(prompt)}`);
+      const response = await fetch(
+        `http://localhost:5000/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
+      );
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
-      }      if (!response.ok) {
+      } if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
@@ -36,9 +39,9 @@ const App = () => {
       setKeyWords(result['tw']);
 
       const combinedContext = result['rag-response:'].context
-      if(typeof(combinedContext) !== "string"){
+      if (typeof (combinedContext) !== "string") {
         combinedContext.map((content: unknown, index: number) => `\n\n======================== Context ${index + 1} ========================\n\n${content}`)
-        .join('\n');
+          .join('\n');
 
         setContext(combinedContext)
       }
@@ -55,7 +58,7 @@ const App = () => {
   const handleSubmit = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     setLoading(true);
-    fetchData(userInput);
+    fetchData(userPrompt, systemPrompt);
   };
 
   const handleAccordionToggle = () => {
@@ -90,7 +93,7 @@ const App = () => {
     <Grid container>
       <Grid item xs={12}>
         <Typography variant="h4" align="center" gutterBottom>
-          LLM vs. RAG
+          RAG
         </Typography>
       </Grid>
 
@@ -101,11 +104,20 @@ const App = () => {
               <TextField
                 id="userInput"
                 name="user_input"
+                label="System prompt"
+                variant="outlined"
+                fullWidth
+                value={systemPrompt}
+                onChange={(e) => setSystemPrompt(e.target.value)}
+              />
+              <TextField
+                id="userInput"
+                name="user_input"
                 label="Ask a question here..."
                 variant="outlined"
                 fullWidth
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
+                value={userPrompt}
+                onChange={(e) => setUserPrompt(e.target.value)}
                 required
               />
             </Grid>
@@ -121,28 +133,7 @@ const App = () => {
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12} sm={5}>
           <Typography variant="h5" align="center" gutterBottom>
-            ChatGPT
-          </Typography>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <TextField
-              id="llmOutput"
-              variant="outlined"
-              multiline
-              rows={10}
-              fullWidth
-              value={llmOutput}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-            <IconButton onClick={() => handleOpenDialog(llmOutput, "LLM")}>
-              <OpenInFullIcon />
-            </IconButton>
-          </div>
-        </Grid>
-        <Grid item xs={12} sm={5}>
-          <Typography variant="h5" align="center" gutterBottom>
-            RAG
+            RAG Response
           </Typography>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <TextField
@@ -156,7 +147,7 @@ const App = () => {
                 readOnly: true,
               }}
             />
-            <IconButton onClick={() => handleOpenDialog(ragOutput, "LLM + RAG")}>
+            <IconButton onClick={() => handleOpenDialog(ragOutput, "Response")}>
               <OpenInFullIcon />
             </IconButton>
           </div>
@@ -164,10 +155,10 @@ const App = () => {
       </Grid>
       <Grid container spacing={2} justifyContent="center" style={{ margin: '10px', gap: '20px' }}>
         {keywords ? Object.entries(keywords).map(([key, _], index) => (
-              <a href={`javascript:void(0)`} onClick={() => handleOpenGlossary(keywords[key])}>
-                  {key}
-                </a>
-          )) : <></>}
+          <a href={`javascript:void(0)`} onClick={() => handleOpenGlossary(keywords[key])}>
+            {key}
+          </a>
+        )) : <></>}
       </Grid>
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={10} style={{ marginTop: '20px' }}>
@@ -215,7 +206,7 @@ const App = () => {
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
-              {dialogContent}
+            {dialogContent}
           </Typography>
         </DialogContent>
       </Dialog>

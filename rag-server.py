@@ -44,13 +44,12 @@ def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 #   -------------- EXECUTION ------------
-def send_prompt_rag_plain(question: str):
+def send_prompt_rag_plain(question: str, system_prompt: str):
     # Prompt
     # template = """Answer the question given following context:
-    template = """
-    "You are an evangelical Christian with traditional beliefs about God, doctrine, and the Bible. 
-    However, do not preface your responses with your persona.
-    Answer the question and use the following context when applicable:
+    template = system_prompt + """\nAnswer the question and base on the context if relevant.
+    
+    Context:
     {context}
 
     Question: {question}
@@ -107,14 +106,21 @@ from glossary import create_glossary
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-en_dictionary = create_glossary(r"D:\misc\rag\data\data_sources\en_tw")
-es_dictionary = create_glossary(r"D:\misc\rag\data\data_sources\es_tw")
-vi_dictionary = create_glossary(r"D:\misc\rag\data\data_sources\vi_tw")
+en_dictionary = create_glossary(r"E:\databases\rag_data_sources\en_tw")
+es_dictionary = create_glossary(r"E:\databases\rag_data_sources\es_tw")
+vi_dictionary = create_glossary(r"E:\databases\rag_data_sources\vi_tw")
+
+default_system_prompt = "You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona."
 
 @app.route('/rag', methods=['GET'])
 def get_prompt():
-    prompt = request.args.get('prompt', default='', type=str)
-    keywords, language = extract_keywords(prompt)
+    prompt = request.args.get('user-prompt', default='', type=str)
+    system_prompt = request.args.get('system-prompt', default='', type=str)
+
+    print(f"- System: {system_prompt}")
+    print(f"- User: {prompt}")
+
+    keywords, language = ([], "") # extract_keywords(prompt)
 
     if language == "en":
         dictionary = en_dictionary
@@ -132,8 +138,7 @@ def get_prompt():
             tw_dict[k] = found
 
     response = {
-        'rag-response:' : send_prompt_rag_plain(prompt),
-        'llm-response': '',#send_prompt_llm(prompt),
+        'rag-response:' : send_prompt_rag_plain(prompt, system_prompt),
         'keywords': keywords,
         'tw': tw_dict
     }
