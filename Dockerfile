@@ -7,6 +7,7 @@ COPY requirements.txt .
 COPY rag-server.py .
 COPY database.py .
 COPY glossary.py .
+COPY data-sources /server/data-sources
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
