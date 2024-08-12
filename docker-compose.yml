@@ -1,0 +1,13 @@
+
+services:
+  server:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DB_PATH: "/server/database"
+      DATA_SOURCE_DIR: "/server/data-sources"
+    volumes:
+      - /database:/server/database
+      - /data-sources:/server/data-sources
