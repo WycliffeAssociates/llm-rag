@@ -99,17 +99,20 @@ const App = () => {
 
       <Grid item xs={12} style={{ marginTop: '20px', marginBottom: '20px' }}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} alignItems="center" justifyContent="center">
-            <Grid item xs={12} sm={8}>
+          <Grid container spacing={3} alignItems="center" justifyContent="center">
+            <Grid item xs={8}>
               <TextField
-                id="userInput"
+                id="systemInput"
                 name="user_input"
                 label="System prompt"
-                variant="outlined"
+                variant="filled"
                 fullWidth
+                multiline
                 value={systemPrompt}
                 onChange={(e) => setSystemPrompt(e.target.value)}
               />
+            </Grid>
+            <Grid item xs={12} sm={8}>
               <TextField
                 id="userInput"
                 name="user_input"
@@ -121,7 +124,7 @@ const App = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={1}>
+            <Grid item xs={12} sm={8} textAlign="center">
               <Button type="submit" variant="contained" color="primary" fullWidth>
                 Submit
               </Button>
@@ -131,9 +134,9 @@ const App = () => {
       </Grid>
 
       <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={5}>
+        <Grid item xs={12} sm={8}>
           <Typography variant="h5" align="center" gutterBottom>
-            RAG Response
+            Response
           </Typography>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <TextField
