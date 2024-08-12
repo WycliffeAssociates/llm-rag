@@ -20,3 +20,19 @@ def create_glossary(directory):
                     tw_map[w.strip()] = text
 
     return tw_map
+
+en_dictionary = create_glossary(r"/path/to/en/tw/dir")
+es_dictionary = create_glossary(r"/path/to/es/tw/dir")
+vi_dictionary = create_glossary(r"/path/to/en/vi/dir")
+
+def get_dictionary_tw(language: str):
+    if language == "en":
+        dictionary = en_dictionary
+    elif language == "es":
+        dictionary = es_dictionary
+    elif language == "vi":
+        dictionary = vi_dictionary
+    else:
+        dictionary = {}
+
+    return dictionary

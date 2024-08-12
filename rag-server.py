@@ -13,10 +13,7 @@ data_source_dir = config["DATA_SOURCE_DIR"]
 glossary_dir = config["GLOSSARY_DIR"]
 
 #### INDEXING ####
-import bs4
 from langchain_community.document_loaders import TextLoader
-
-# Index
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from database import create_db
@@ -64,7 +61,8 @@ def send_prompt_rag_plain(question: str, system_prompt: str):
         | StrOutputParser()
     )
 
-    docs = retriever.get_relevant_documents(question)
+    # docs = retriever.get_relevant_documents(question)
+    docs = []
 
     return {
         'response': rag_chain.invoke(question),
@@ -101,14 +99,10 @@ Prompt:
 # ### SERVER
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from glossary import create_glossary
+# from glossary import get_dictionary_tw
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-
-en_dictionary = create_glossary(r"E:\databases\rag_data_sources\en_tw")
-es_dictionary = create_glossary(r"E:\databases\rag_data_sources\es_tw")
-vi_dictionary = create_glossary(r"E:\databases\rag_data_sources\vi_tw")
 
 default_system_prompt = "You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona."
 
@@ -120,22 +114,15 @@ def get_prompt():
     print(f"- System: {system_prompt}")
     print(f"- User: {prompt}")
 
-    keywords, language = ([], "") # extract_keywords(prompt)
-
-    if language == "en":
-        dictionary = en_dictionary
-    elif language == "es":
-        dictionary = es_dictionary
-    elif language == "vi":
-        dictionary = vi_dictionary
-    else:
-        dictionary = {}
+    keywords, language = ([], "")
+    # keywords, language = extract_keywords(prompt)
+    # dictionary = get_dictionary_tw(language)
 
     tw_dict = {}
-    for k in keywords:
-        found = dictionary.get(k.lower(), '')
-        if found != '':
-            tw_dict[k] = found
+    # for k in keywords:
+    #     found = dictionary.get(k.lower(), '')
+    #     if found != '':
+    #         tw_dict[k] = found
 
     response = {
         'rag-response:' : send_prompt_rag_plain(prompt, system_prompt),

@@ -34,7 +34,6 @@ const App = () => {
       }
       const result = await response.json();
 
-      setLlmOutput(result['llm-response']);
       setRagOutput(result['rag-response:'].response);
       setKeyWords(result['tw']);
 
