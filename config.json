@@ -1,6 +1,5 @@
 {
     "OPENAI_API_KEY": "",
-    "GLOSSARY_DIR": "",
     "DB_PATH": "",
     "DATA_SOURCE_DIR": ""
 }

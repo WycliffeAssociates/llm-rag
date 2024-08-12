@@ -10,7 +10,6 @@ OPENAI_KEY = config['OPENAI_API_KEY']
 # ### Vector Store DB & Retriever
 db_path = config["DB_PATH"]
 data_source_dir = config["DATA_SOURCE_DIR"]
-glossary_dir = config["GLOSSARY_DIR"]
 
 #### INDEXING ####
 from langchain_community.document_loaders import TextLoader
