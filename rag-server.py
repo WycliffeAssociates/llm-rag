@@ -2,14 +2,19 @@
 import os
 import json
 
-with open('config.json', 'r') as conf:
-    config = json.load(conf)
+config = {}
+if os.path.exists('config.json'):
+    with open('config.json', 'r') as conf:
+        config = json.load(conf)
+else:
+    config['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
+    config['DATA_SOURCE_DIR'] = os.getenv('DATA_SOURCE_DIR')
+    config['DB_PATH'] = os.getenv('DB_PATH')
 
+# Const values
 OPENAI_KEY = config['OPENAI_API_KEY']
-
-# ### Vector Store DB & Retriever
-db_path = config["DB_PATH"]
-data_source_dir = config["DATA_SOURCE_DIR"]
+DB_PATH = config["DB_PATH"]
+DATA_SOURCE_DIR = config["DATA_SOURCE_DIR"]
 
 #### INDEXING ####
 from langchain_community.document_loaders import TextLoader
@@ -18,13 +23,12 @@ from langchain_community.vectorstores import Chroma
 from database import create_db
 
 embedding = OpenAIEmbeddings(api_key=OPENAI_KEY)
-if os.path.exists(db_path):
-    print(f"Database found at {db_path}")
-    # vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=OpenAIEmbeddings())
-    vectorstore = Chroma(persist_directory=db_path, embedding_function=embedding)
+if os.path.exists(DB_PATH):
+    print(f"Database found at {DB_PATH}")
+    vectorstore = Chroma(persist_directory=DB_PATH, embedding_function=embedding)
 else:
-    print(f"Constructing database at {db_path}")
-    vectorstore = create_db(db_path, data_source_dir, embedding)
+    print(f"Constructing database at {DB_PATH}")
+    vectorstore = create_db(DB_PATH, DATA_SOURCE_DIR, embedding)
 
 retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 5, 'lambda_mult': 0.25})
 
