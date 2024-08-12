@@ -35,4 +35,4 @@ EXPOSE 80
 ENV PYTHONUNBUFFERED=1
 
 # Run rag-server.py when the container launches
-RUN python rag-server.py
+CMD ["python", "rag-server.py"]
