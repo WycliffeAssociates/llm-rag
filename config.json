@@ -1,6 +1,4 @@
 {
-    "LANGCHAIN_ENDPOINT": "",
-    "LANGCHAIN_API_KEY": "",
     "OPENAI_API_KEY": "",
     "GLOSSARY_DIR": "",
     "DB_PATH": "",
