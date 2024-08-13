@@ -5,6 +5,7 @@ WORKDIR /server
 
 ENV DB_PATH=/server/database
 ENV DATA_SOURCE_DIR=/server/data-sources
+ARG OPENAI_API_KEY
 
 COPY data-sources/ data-sources/
 COPY database.py .
