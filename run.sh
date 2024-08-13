@@ -13,6 +13,8 @@ fi
 
 shopt -s expand_aliases
 
+set -x
+
 alias op="docker run --rm -e OP_SERVICE_ACCOUNT_TOKEN 1password/op:2 op"
 
 export OP_SERVICE_ACCOUNT_TOKEN=$OP_SERVICE_ACCOUNT_TOKEN

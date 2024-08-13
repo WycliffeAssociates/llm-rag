@@ -3,7 +3,7 @@ services:
   server:
     build: .
     ports:
-      - "80:80"
+      - "8006:80"
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       DB_PATH: "/server/database"
@@ -15,4 +15,3 @@ services:
     build: ./wa-chat
     ports: 
       - "5000:5000"
-    
