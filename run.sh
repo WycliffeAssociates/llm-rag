@@ -20,6 +20,7 @@ alias op="docker run --rm -e OP_SERVICE_ACCOUNT_TOKEN 1password/op:2 op"
 export OP_SERVICE_ACCOUNT_TOKEN=$OP_SERVICE_ACCOUNT_TOKEN
 
 # Define environment variables
+export DNS_NAME=${DNS_NAME}
 export OPENAI_API_KEY=$(op read "op://DevOps/openai-key/credential")
 export DB_PATH=/server/database
 export DATA_SOURCE_DIR=/server/data-sources

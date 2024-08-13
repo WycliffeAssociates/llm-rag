@@ -8,3 +8,18 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       DB_PATH: "/server/database"
       DATA_SOURCE_DIR: "/server/data-sources"
+  app:
+    build: ./wa-chat
+    ports: 
+      - "5000:5000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.llm-rag.rule=Host(`$DNS_NAME`)"
+      - "traefik.http.routers.llm-rag.entrypoints=websecure"
+      - "traefik.http.routers.llm-rag.tls=true"
+    networks:
+      - traefik_default
+
+networks:
+  traefik_default:
+    external: true
