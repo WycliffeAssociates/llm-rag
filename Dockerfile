@@ -8,6 +8,7 @@ ENV DATA_SOURCE_DIR=/server/data-sources
 
 COPY data-sources/ data-sources/
 COPY database.py .
+COPY init-database.py .
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
