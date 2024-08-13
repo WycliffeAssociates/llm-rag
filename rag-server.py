@@ -64,8 +64,7 @@ def send_prompt_rag_plain(question: str, system_prompt: str):
         | StrOutputParser()
     )
 
-    # docs = retriever.get_relevant_documents(question)
-    docs = []
+    docs = retriever.get_relevant_documents(question)
 
     return {
         'response': rag_chain.invoke(question),
