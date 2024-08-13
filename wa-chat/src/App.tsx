@@ -24,7 +24,7 @@ const App = () => {
     try {
 
       const response = await fetch(
-        `http://server:80/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
+        `https://llm-rag-server.walink.org/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
       );
 
       if (!response.ok) {
