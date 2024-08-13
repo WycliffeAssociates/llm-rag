@@ -24,7 +24,7 @@ const App = () => {
     try {
 
       const response = await fetch(
-        `http://localhost:5000/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
+        `http://127.0.0.1:80/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
       );
 
       if (!response.ok) {
@@ -99,7 +99,7 @@ const App = () => {
       <Grid item xs={12} style={{ marginTop: '20px', marginBottom: '20px' }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3} alignItems="center" justifyContent="center">
-            <Grid item xs={8}>
+            <Grid item xs={7}>
               <TextField
                 id="systemInput"
                 name="user_input"
@@ -111,7 +111,7 @@ const App = () => {
                 onChange={(e) => setSystemPrompt(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12} sm={7}>
               <TextField
                 id="userInput"
                 name="user_input"
@@ -123,7 +123,7 @@ const App = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={8} textAlign="center">
+            <Grid item xs={12} sm={7} textAlign="center">
               <Button type="submit" variant="contained" color="primary" fullWidth>
                 Submit
               </Button>
@@ -133,7 +133,7 @@ const App = () => {
       </Grid>
 
       <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={8}>
+        <Grid item xs={12} sm={7}>
           <Typography variant="h5" align="center" gutterBottom>
             Response
           </Typography>
