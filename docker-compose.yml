@@ -11,3 +11,8 @@ services:
     volumes:
       - /database:/server/database
       - /data-sources:/server/data-sources
+  app:
+    build: ./wa-chat
+    ports: 
+      - "5000:5000"
+    
