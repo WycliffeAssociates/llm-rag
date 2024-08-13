@@ -8,6 +8,7 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       DB_PATH: "/server/database"
       DATA_SOURCE_DIR: "/server/data-sources"
+<<<<<<< HEAD
   app:
     build: ./wa-chat
     ports: 
@@ -23,3 +24,12 @@ services:
 networks:
   traefik_default:
     external: true
+=======
+    volumes:
+      - /database:/server/database
+      - /data-sources:/server/data-sources
+  app:
+    build: ./wa-chat
+    ports: 
+      - "5000:5000"
+>>>>>>> aw-dockerize-fe
