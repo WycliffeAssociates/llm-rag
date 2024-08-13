@@ -24,7 +24,7 @@ const App = () => {
     try {
 
       const response = await fetch(
-        `http://localhost:5000/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
+        `http://server:80/rag?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
       );
 
       if (!response.ok) {
