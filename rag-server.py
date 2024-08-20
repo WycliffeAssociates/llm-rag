@@ -133,6 +133,16 @@ def get_prompt():
     }
     return jsonify(response)
 
+@app.route('/rag-compare', methods=['GET'])
+def rag_compare():
+    prompt = request.args.get('prompt', default='', type=str)
+
+    response = {
+        'rag-response:' : send_prompt_rag_plain(prompt, system_prompt=""),
+        'llm-response': send_prompt_llm(prompt),
+    }
+    return jsonify(response)
+
 if __name__ == '__main__':
     # app.run(debug=True)
     app.run(host='0.0.0.0', port=80, debug=True)
