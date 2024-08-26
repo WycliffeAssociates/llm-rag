@@ -68,7 +68,7 @@ def send_prompt_rag_plain(question: str, system_prompt: str):
 
     return {
         'response': rag_chain.invoke(question),
-        'context': list(map(lambda doc: doc.page_content, docs))
+        'context': format_docs(docs)
     }
 
 
@@ -108,7 +108,7 @@ def prepend_docs(docs: list):
     return "\n\n".join(docs_as_strings)
 
 def send_prompt_experimental(question: str, system_prompt: str):
-    template = system_prompt + """\nAnswer the question and base on the context if relevant.
+    template = system_prompt + """\nAnswer the question, given the following context
     
     Context:
     {context}
@@ -129,7 +129,7 @@ def send_prompt_experimental(question: str, system_prompt: str):
 
     return {
         'response': rag_chain.invoke(question),
-        'context': prepend_docs(context_docs)
+        'context': format_docs(context_docs)
     }
 
 # =========== SERVER ===========

@@ -36,12 +36,8 @@ const RagComparison = () => {
     //   setKeyWords(result['tw']);
 
       const combinedContext = result['rag-response'].context
-      if(typeof(combinedContext) !== "string"){
-        combinedContext.map((content: unknown, index: number) => `\n\n======================== Context ${index + 1} ========================\n\n${content}`)
-        .join('\n');
-
-        setContext(combinedContext)
-      }
+      
+      setContext(combinedContext)
 
 
     } catch (error) {
