@@ -30,7 +30,7 @@ else:
     print(f"Constructing database at {DB_PATH}")
     vectorstore = create_db(DB_PATH, DATA_SOURCE_DIR, embedding)
 
-retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 3, 'lambda_mult': 0.25})
+retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 3, 'lambda_mult': 0.5 })
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
