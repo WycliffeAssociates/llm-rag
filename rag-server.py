@@ -30,7 +30,7 @@ else:
     print(f"Constructing database at {DB_PATH}")
     vectorstore = create_db(DB_PATH, DATA_SOURCE_DIR, embedding)
 
-retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 5, 'lambda_mult': 0.25})
+retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 3, 'lambda_mult': 0.5 })
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
@@ -68,7 +68,7 @@ def send_prompt_rag_plain(question: str, system_prompt: str):
 
     return {
         'response': rag_chain.invoke(question),
-        'context': list(map(lambda doc: doc.page_content, docs))
+        'context': format_docs(docs)
     }
 
 
@@ -97,8 +97,42 @@ Prompt:
     
     return keywords, language
 
+# =========== EXPERIMENTAL =========
+random_docs = [
+    "Video game monetization is a type of process that a video game publisher can use to generate revenue from a video game product. The methods of monetization may vary between games, especially when they come from different genres or platforms, but they all serve the same purpose to return money to the game developers, copyright owners, and other stakeholders. As the monetization methods continue to diversify, they also affect the game design in a way that sometimes leads to criticism.",
+    "Capitalism is an economic system based on the private ownership of the means of production and their operation for profit.[1][2][3][4][5] Central characteristics of capitalism include capital accumulation, competitive markets, price systems, private property, recognition of property rights, self-interest, economic freedom, meritocracy, work ethic, consumer sovereignty, profit motive, entrepreneurship, commodification, voluntary exchange, wage labor, production of commodities and services, and focus on economic growth.[6][7][8][9][10][11] In a market economy, decision-making and investments are determined by owners of wealth, property, or ability to maneuver capital or production ability in capital and financial markets—whereas prices and the distribution of goods and services are mainly determined by competition in goods and services markets.[12]",
+]
 
-# ### SERVER
+def prepend_docs(docs: list):
+    docs_as_strings = random_docs + list(doc.page_content for doc in docs)
+    return "\n\n".join(docs_as_strings)
+
+def send_prompt_experimental(question: str, system_prompt: str):
+    template = system_prompt + """\nAnswer the question, given the following context
+    
+    Context:
+    {context}
+
+    Question: {question}
+    """
+    prompt = ChatPromptTemplate.from_template(template)
+    
+    # Chain
+    rag_chain = (
+        {"context": retriever | prepend_docs, "question": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+
+    context_docs = retriever.get_relevant_documents(question)
+
+    return {
+        'response': rag_chain.invoke(question),
+        'context': format_docs(context_docs)
+    }
+
+# =========== SERVER ===========
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 # from glossary import get_dictionary_tw
@@ -108,7 +142,7 @@ CORS(app)  # Enable CORS for all routes
 
 default_system_prompt = "You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona."
 
-@app.route('/rag', methods=['GET'])
+@app.route('/rag-system-prompt', methods=['GET'])
 def get_prompt():
     prompt = request.args.get('user-prompt', default='', type=str)
     system_prompt = request.args.get('system-prompt', default='', type=str)
@@ -116,20 +150,8 @@ def get_prompt():
     print(f"- System: {system_prompt}")
     print(f"- User: {prompt}")
 
-    keywords, language = ([], "")
-    # keywords, language = extract_keywords(prompt)
-    # dictionary = get_dictionary_tw(language)
-
-    tw_dict = {}
-    # for k in keywords:
-    #     found = dictionary.get(k.lower(), '')
-    #     if found != '':
-    #         tw_dict[k] = found
-
     response = {
-        'rag-response:' : send_prompt_rag_plain(prompt, system_prompt),
-        'keywords': keywords,
-        'tw': tw_dict
+        'rag-response' : send_prompt_experimental(prompt, system_prompt),
     }
     return jsonify(response)
 
@@ -138,8 +160,8 @@ def rag_compare():
     prompt = request.args.get('prompt', default='', type=str)
 
     response = {
-        'rag-response:' : send_prompt_rag_plain(prompt, system_prompt=""),
-        'llm-response': send_prompt_llm(prompt),
+        'rag-response' : send_prompt_rag_plain(prompt, system_prompt=""),
+        'llm-response' : send_prompt_llm(prompt),
     }
     return jsonify(response)
 

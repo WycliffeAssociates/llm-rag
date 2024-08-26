@@ -32,16 +32,12 @@ const RagComparison = () => {
       const result = await response.json();
 
       setLlmOutput(result['llm-response']);
-      setRagOutput(result['rag-response:'].response);
+      setRagOutput(result['rag-response'].response);
     //   setKeyWords(result['tw']);
 
-      const combinedContext = result['rag-response:'].context
-      if(typeof(combinedContext) !== "string"){
-        combinedContext.map((content: unknown, index: number) => `\n\n======================== Context ${index + 1} ========================\n\n${content}`)
-        .join('\n');
-
-        setContext(combinedContext)
-      }
+      const combinedContext = result['rag-response'].context
+      
+      setContext(combinedContext)
 
 
     } catch (error) {

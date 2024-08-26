@@ -31,6 +31,17 @@ def create_db(db_path: str, data_dir: str, embedding: OpenAIEmbeddings):
     vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=embedding)
     return vectorstore
 
+def add_document(db_path: str, document_file: str, embedding: OpenAIEmbeddings):
+    vectorstore = Chroma(persist_directory=db_path, embedding_function=embedding)
+
+    loader = TextLoader(document_file, encoding="UTF-8")
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=300, 
+        chunk_overlap=50)
+    
+    splits = text_splitter.split_documents(loader.load())
+    
+    vectorstore.add_documents(documents=splits)
 
 def separate_files_recursively(directory):
     """
