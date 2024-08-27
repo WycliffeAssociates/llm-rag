@@ -28,5 +28,5 @@ export DATA_SOURCE_DIR=/server/data-sources
 
 # Build and start the Docker containers
 docker compose down
-docker compose build --no-cache --build-arg OPENAI_API_KEY=${OPENAI_API_KEY}
+docker compose build --build-arg OPENAI_API_KEY=${OPENAI_API_KEY}
 docker compose up -d
