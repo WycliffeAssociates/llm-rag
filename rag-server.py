@@ -160,7 +160,7 @@ def rag_compare():
     prompt = request.args.get('prompt', default='', type=str)
 
     response = {
-        'rag-response' : send_prompt_rag_plain(prompt, system_prompt=""),
+        'rag-response' : send_prompt_rag_plain(prompt, system_prompt=default_system_prompt),
         'llm-response' : send_prompt_llm(prompt),
     }
     return jsonify(response)
