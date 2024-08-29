@@ -1,5 +1,6 @@
 bs4
 langchain_community
+langchain_chroma
 tiktoken
 langchain-openai
 langchainhub
