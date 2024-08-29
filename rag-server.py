@@ -108,7 +108,7 @@ def prepend_docs(docs: list):
     return "\n\n".join(docs_as_strings)
 
 def send_prompt_experimental(question: str, system_prompt: str):
-    template = system_prompt + """\nAnswer the question, given the following context
+    template = system_prompt + """\nOnly if it is relevant, use to the context below to help formatting your answer:
     
     Context:
     {context}
@@ -140,7 +140,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-default_system_prompt = "You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona."
+default_system_prompt = "You are an evangelical Christian with traditional beliefs about God and the Bible. You will help with question answering and not mention your persona."
 
 @app.route('/rag-system-prompt', methods=['GET'])
 def get_prompt():
