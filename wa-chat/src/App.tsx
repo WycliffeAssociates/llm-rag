@@ -6,7 +6,7 @@ import Markdown from 'react-markdown'
 
 const RagExperiment = () => {
   const [userPrompt, setUserPrompt] = useState('');
-  const [systemPrompt, setSystemPrompt] = useState('You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona.');
+  const [systemPrompt, setSystemPrompt] = useState('You are a helpful assistant and evangelical Christian.');
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState('');
   const [llmOutput, setLlmOutput] = useState('');

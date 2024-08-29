@@ -19,7 +19,7 @@ DATA_SOURCE_DIR = config["DATA_SOURCE_DIR"]
 #### INDEXING ####
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from database import create_db
 
 embedding = OpenAIEmbeddings(api_key=OPENAI_KEY)
@@ -32,12 +32,12 @@ else:
 
 retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 3, 'lambda_mult': 0.5 })
 
-from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAI, ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
-llm = ChatOpenAI(temperature=0, api_key=OPENAI_KEY)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=OPENAI_KEY)
 
 # Post-processing
 def format_docs(docs):
@@ -108,7 +108,7 @@ def prepend_docs(docs: list):
     return "\n\n".join(docs_as_strings)
 
 def send_prompt_experimental(question: str, system_prompt: str):
-    template = system_prompt + """\nAnswer the question, given the following context
+    template = system_prompt + """Use the context if relevant to help formatting your answer:
     
     Context:
     {context}
