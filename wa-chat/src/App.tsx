@@ -35,7 +35,7 @@ const RagExperiment = () => {
       setRagOutput(result['rag-response'].response);
 
       const combinedContext = result['rag-response'].context
-    
+
       setContext(combinedContext)
 
 
@@ -49,6 +49,7 @@ const RagExperiment = () => {
 
   const handleSubmit = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
+    setRagOutput('');
     setLoading(true);
     fetchData(userPrompt, systemPrompt);
   };
@@ -130,22 +131,27 @@ const RagExperiment = () => {
           <Typography variant="h5" align="center" gutterBottom>
             Response
           </Typography>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <TextField
-              id="ragOutput"
-              variant="outlined"
-              multiline
-              rows={10}
-              fullWidth
-              value={ragOutput}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
+          
+        </Grid>
+        <Grid item xs={12} sm={7}>
+        <Typography variant="body1" sx={{
+              minHeight: '150px',
+              backgroundColor: '#f8f8fd',
+              color: '#333',              // Dark text for readability
+              padding: '10px 20px',       // Padding inside the bubble
+              borderRadius: '15px',       // Rounded corners for bubble effect
+              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.15)', // Subtle shadow for depth
+              margin: '5px 0',            // Margin for spacing between messages
+              lineHeight: 1.5,            // Adjusted line height for readability
+              overflowY: 'auto',
+            }}>
+              <Markdown>
+                {ragOutput}
+              </Markdown>
+            </Typography>
             <IconButton onClick={() => handleOpenDialog(ragOutput, "Response")}>
               <OpenInFullIcon />
             </IconButton>
-          </div>
         </Grid>
       </Grid>
       <Grid container spacing={2} justifyContent="center" style={{ margin: '10px', gap: '20px' }}>
@@ -188,7 +194,7 @@ const RagExperiment = () => {
       {loading && (
         <div style={{
           position: 'fixed',
-          top: '50%',
+          top: '40%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           zIndex: 1000
@@ -200,8 +206,10 @@ const RagExperiment = () => {
       <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="lg">
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
-          <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
-            {dialogContent}
+          <Typography variant="body1">
+            <Markdown>
+              {dialogContent}
+            </Markdown>
           </Typography>
         </DialogContent>
       </Dialog>
