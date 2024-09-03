@@ -97,12 +97,12 @@ Prompt:
     return keywords, language
 
 # =========== EXPERIMENTAL =========
-random_docs = [
-    "Video game monetization is a type of process that a video game publisher can use to generate revenue from a video game product. The methods of monetization may vary between games, especially when they come from different genres or platforms, but they all serve the same purpose to return money to the game developers, copyright owners, and other stakeholders. As the monetization methods continue to diversify, they also affect the game design in a way that sometimes leads to criticism.",
-    "Capitalism is an economic system based on the private ownership of the means of production and their operation for profit.[1][2][3][4][5] Central characteristics of capitalism include capital accumulation, competitive markets, price systems, private property, recognition of property rights, self-interest, economic freedom, meritocracy, work ethic, consumer sovereignty, profit motive, entrepreneurship, commodification, voluntary exchange, wage labor, production of commodities and services, and focus on economic growth.[6][7][8][9][10][11] In a market economy, decision-making and investments are determined by owners of wealth, property, or ability to maneuver capital or production ability in capital and financial markets—whereas prices and the distribution of goods and services are mainly determined by competition in goods and services markets.[12]",
-]
-
 def prepend_docs(docs: list):
+    # adding random documents improves performance 
+    random_docs = [
+        "Video game monetization is a type of process that a video game publisher can use to generate revenue from a video game product. The methods of monetization may vary between games, especially when they come from different genres or platforms, but they all serve the same purpose to return money to the game developers, copyright owners, and other stakeholders. As the monetization methods continue to diversify, they also affect the game design in a way that sometimes leads to criticism.",
+        "Capitalism is an economic system based on the private ownership of the means of production and their operation for profit.[1][2][3][4][5] Central characteristics of capitalism include capital accumulation, competitive markets, price systems, private property, recognition of property rights, self-interest, economic freedom, meritocracy, work ethic, consumer sovereignty, profit motive, entrepreneurship, commodification, voluntary exchange, wage labor, production of commodities and services, and focus on economic growth.[6][7][8][9][10][11] In a market economy, decision-making and investments are determined by owners of wealth, property, or ability to maneuver capital or production ability in capital and financial markets—whereas prices and the distribution of goods and services are mainly determined by competition in goods and services markets.[12]",
+    ]
     docs_as_strings = random_docs + list(doc.page_content for doc in docs)
     return "\n\n".join(docs_as_strings)
 
