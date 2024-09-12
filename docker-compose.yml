@@ -19,6 +19,7 @@ services:
     build: ./wa-chat
     ports: 
       - "5000:5000"
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.llm-rag.rule=Host(`$DNS_NAME_APP`)"
