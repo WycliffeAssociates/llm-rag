@@ -107,7 +107,7 @@ def prepend_docs(docs: list):
     return "\n\n".join(docs_as_strings)
 
 def send_prompt_experimental(question: str, system_prompt: str):
-    template = system_prompt + """Use the context if relevant to help formatting your answer:
+    template = system_prompt + """Use the context if relevant to help formatting your answer.
     
     Context:
     {context}
@@ -130,3 +130,24 @@ def send_prompt_experimental(question: str, system_prompt: str):
         'response': rag_chain.invoke(question),
         'context': format_docs(context_docs)
     }
+
+def send_prompt_with_llm_eval(question: str):
+    # response = send_prompt_experimental(question, system_prompt)
+    
+    evaluation_prompt = """
+    Evaluate the question with the persona below. If the question is irrelevant, respond False. Otherwise, respond True:
+    
+    Persona: You are a helpful evangelical Christian, and you will answer question that are relevant to Biblical context.
+    
+    Question: {0}
+    """.format(question)
+    
+    messages = [
+        ("user", evaluation_prompt),
+    ]
+    
+    passed = llm.invoke(messages).content
+    return passed == 'True'
+    
+
+    
