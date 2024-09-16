@@ -26,7 +26,7 @@ def create_db(db_path: str, data_dir: str, embedding: OpenAIEmbeddings):
     for f in md_files:
         with open(f, encoding="UTF-8", mode='r') as f:
             md = f.read()
-            splits = splits + md_splitter.split_text(md)
+            splits.extend(md_splitter.split_text(md))
 
     vectorstore = Chroma.from_documents(documents=splits, persist_directory=db_path, embedding=embedding)
     return vectorstore
