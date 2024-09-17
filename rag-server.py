@@ -16,11 +16,8 @@ def get_prompt():
     prompt = request.args.get('user-prompt', default='', type=str)
     system_prompt = request.args.get('system-prompt', default='', type=str)
 
-    print(f"- System: {system_prompt}")
-    print(f"- User: {prompt}")
-    
     response = {
-        'rag-response' : send_prompt_experimental(prompt, system_prompt),
+        'rag-response' : send_prompt_experimental(prompt, default_system_prompt),
     }
 
     return jsonify(response)
