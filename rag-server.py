@@ -3,7 +3,7 @@
 # =========== SERVER ===========
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, send_prompt_with_llm_eval
+from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -18,12 +18,7 @@ def get_prompt():
 
     print(f"- System: {system_prompt}")
     print(f"- User: {prompt}")
-
-    # if send_prompt_with_llm_eval(prompt) == False:
-    #     response = {
-    #         'rag-response' : "",
-    #     }
-    # else:
+    
     response = {
         'rag-response' : send_prompt_experimental(prompt, system_prompt),
     }
