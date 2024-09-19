@@ -14,7 +14,7 @@ default_system_prompt = "You are an evangelical Christian with traditional belie
 @app.route('/rag-system-prompt', methods=['GET'])
 def get_prompt():
     prompt = request.args.get('user-prompt', default='', type=str)
-    system_prompt = request.args.get('system-prompt', default='', type=str)
+    # system_prompt = request.args.get('system-prompt', default='', type=str)
 
     response = {
         'rag-response' : send_prompt_experimental(prompt, default_system_prompt),
