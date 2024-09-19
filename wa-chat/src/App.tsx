@@ -6,7 +6,7 @@ import Markdown from 'react-markdown'
 
 const RagExperiment = () => {
   const [userPrompt, setUserPrompt] = useState('');
-  const [systemPrompt, setSystemPrompt] = useState('You are a helpful assistant and evangelical Christian.');
+  const [systemPrompt, setSystemPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState('');
   const [llmOutput, setLlmOutput] = useState('');
@@ -93,18 +93,6 @@ const RagExperiment = () => {
       <Grid item xs={12} style={{ marginTop: '20px', marginBottom: '20px' }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3} alignItems="center" justifyContent="center">
-            <Grid item xs={7}>
-              <TextField
-                id="systemInput"
-                name="user_input"
-                label="System prompt"
-                variant="filled"
-                fullWidth
-                multiline
-                value={systemPrompt}
-                onChange={(e) => setSystemPrompt(e.target.value)}
-              />
-            </Grid>
             <Grid item xs={12} sm={7}>
               <TextField
                 id="userInput"
