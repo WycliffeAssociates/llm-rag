@@ -16,12 +16,10 @@ def get_prompt():
     prompt = request.args.get('user-prompt', default='', type=str)
     system_prompt = request.args.get('system-prompt', default='', type=str)
 
-    print(f"- System: {system_prompt}")
-    print(f"- User: {prompt}")
-
     response = {
-        'rag-response' : send_prompt_experimental(prompt, system_prompt),
+        'rag-response' : send_prompt_experimental(prompt, default_system_prompt),
     }
+
     return jsonify(response)
 
 @app.route('/rag-compare', methods=['GET'])
@@ -29,7 +27,7 @@ def rag_compare():
     prompt = request.args.get('prompt', default='', type=str)
 
     response = {
-        'rag-response' : send_prompt_rag_plain(prompt, system_prompt=default_system_prompt),
+        'rag-response' : send_prompt_experimental(prompt, system_prompt=default_system_prompt),
         'llm-response' : send_prompt_llm(prompt),
     }
     return jsonify(response)
