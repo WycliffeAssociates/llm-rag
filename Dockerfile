@@ -25,9 +25,7 @@ WORKDIR /server
 COPY --from=builder /server/database/ /server/database/
 # Copy the source files to the container
 COPY requirements.txt .
-COPY rag-server.py .
-COPY database.py .
-COPY glossary.py .
+COPY *.py .
 
 # Install Python dependencies
 RUN pip install -r requirements.txt
