@@ -190,4 +190,14 @@ def eval_statement_of_faith(question: str, answer: str):
     return passed == "True"
     
 
-    
+### TRANSCRIPTION
+from openai import OpenAI
+client = OpenAI(api_key=OPENAI_KEY)
+
+def transcribe(file: str):
+    with open(file, "rb") as audio_file:
+        transcription = client.audio.transcriptions.create(
+            model="whisper-1", 
+            file=audio_file
+        )
+        return transcription.text

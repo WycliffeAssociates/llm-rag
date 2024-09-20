@@ -4,7 +4,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental
+from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, transcribe
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -46,8 +46,12 @@ def upload_audio():
     # Save the file to the uploads folder
     file_path = os.path.join(r"/path/temp/", audio_file.filename)
     audio_file.save(file_path)
+    
+    prompt = transcribe(file_path)
 
-    return jsonify({"prompt": "Audio file uploaded successfully"}), 200
+    print(prompt)
+
+    return jsonify({"prompt": prompt }), 200
 
 
 if __name__ == '__main__':

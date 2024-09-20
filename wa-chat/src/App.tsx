@@ -3,9 +3,10 @@ import { Typography, Grid, TextField, Button, Accordion, AccordionSummary, Accor
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import Markdown from 'react-markdown'
+import AudioRecorder from './AudioRecorder';
 
 const RagExperiment = () => {
-  const [userPrompt, setUserPrompt] = useState('');
+  const [userPrompt, setUserPrompt] = useState<string>('');
   const [systemPrompt, setSystemPrompt] = useState('You are a helpful assistant and evangelical Christian.');
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState('');
@@ -116,6 +117,7 @@ const RagExperiment = () => {
                 onChange={(e) => setUserPrompt(e.target.value)}
                 required
               />
+              <AudioRecorder setUserPrompt={setUserPrompt}/>
             </Grid>
             <Grid item xs={12} sm={7} textAlign="center">
               <Button type="submit" variant="contained" color="primary" fullWidth>

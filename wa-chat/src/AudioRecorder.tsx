@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function AudioRecorder() {
+function AudioRecorder({ setUserPrompt }: { setUserPrompt: React.Dispatch<React.SetStateAction<string>>}) {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -43,6 +43,9 @@ function AudioRecorder() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        setUserPrompt(data['prompt'])
+        
         console.log('Audio file uploaded successfully');
       } else {
         console.error('Audio upload failed');
@@ -64,12 +67,12 @@ function AudioRecorder() {
       ) : (
         <button onClick={startRecording}>Start Recording</button>
       )}
-      {audioUrl && (
+      {/* {audioUrl && (
         <div>
           <h3>Recorded Audio:</h3>
           <audio controls src={audioUrl}></audio>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
