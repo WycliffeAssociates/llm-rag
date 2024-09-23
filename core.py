@@ -73,11 +73,12 @@ def send_prompt_rag_plain(question: str, system_prompt: str):
 
 def send_prompt_llm(prompt: str):
     # test llm
+    openAILM = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=OPENAI_KEY)
     messages = [
         ("system", "Answer the user prompt."),
         ("user", prompt),
     ]
-    return llm.invoke(messages).content
+    return openAILM.invoke(messages).content
 
 def extract_keywords(prompt: str):
     messages = [

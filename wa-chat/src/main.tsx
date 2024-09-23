@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RagExperiment from './App.tsx'
 import RagComparison from './RAG-Comparison.tsx'
 import './index.css'
+import ChatView from './ChatPage.tsx';
 
 
 const Main = () => {
@@ -12,6 +13,7 @@ const Main = () => {
       <Routes>
         <Route path="/" element={<RagComparison/>} />
         <Route path="/experiment" element={<RagExperiment/>} />
+        <Route path="/chat" element={<ChatView/>} />
       </Routes>
     </Router>
   );
