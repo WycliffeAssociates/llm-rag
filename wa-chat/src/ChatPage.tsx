@@ -30,7 +30,7 @@ const ChatView = () => {
 
       setMessages([...messages, newUserMessage]);
 
-      fetch(`http://localhost:80/rag?prompt=${encodeURIComponent(inputMessage)}`)
+      fetch(`https://llm-rag-server.walink.org/rag?prompt=${encodeURIComponent(inputMessage)}`)
         .then(r => r.json())
         .then(res => {
           const text = res['rag-response'].response
