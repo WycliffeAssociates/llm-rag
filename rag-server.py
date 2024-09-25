@@ -1,9 +1,10 @@
 # ! pip install langchain_community tiktoken langchain-openai langchainhub chromadb langchain flask
 
 # =========== SERVER ===========
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental
+from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, transcribe
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -31,6 +32,45 @@ def rag_compare():
         'llm-response' : send_prompt_llm(prompt),
     }
     return jsonify(response)
+
+@app.route('/rag', methods=['GET'])
+def rag():
+    prompt = request.args.get('prompt', default='', type=str)
+
+    response = {
+        'rag-response' : send_prompt_experimental(prompt, system_prompt=default_system_prompt)
+    }
+    return jsonify(response)
+
+@app.route('/llm', methods=['GET'])
+def llm_endpoint():
+    prompt = request.args.get('prompt', default='', type=str)
+
+    response = {
+        'llm-response' : send_prompt_llm(prompt)
+    }
+    return jsonify(response)
+
+@app.route('/upload-audio-command', methods=['POST'])
+def upload_audio():
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio file provided"}), 400
+    
+    audio_file = request.files['audio']
+    
+    if audio_file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    # Save the file to the uploads folder
+    file_path = os.path.join(r"/tmp", audio_file.filename)
+    audio_file.save(file_path)
+    
+    prompt = transcribe(file_path)
+
+    print(prompt)
+
+    return jsonify({"prompt": prompt }), 200
+
 
 if __name__ == '__main__':
     # app.run(debug=True)

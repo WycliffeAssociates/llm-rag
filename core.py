@@ -73,11 +73,12 @@ def send_prompt_rag_plain(question: str, system_prompt: str):
 
 def send_prompt_llm(prompt: str):
     # test llm
+    openAILM = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=OPENAI_KEY)
     messages = [
         ("system", "Answer the user prompt."),
         ("user", prompt),
     ]
-    return llm.invoke(messages).content
+    return openAILM.invoke(messages).content
 
 def extract_keywords(prompt: str):
     messages = [
@@ -190,4 +191,14 @@ def eval_statement_of_faith(question: str, answer: str):
     return passed == "True"
     
 
-    
+### TRANSCRIPTION
+from openai import OpenAI
+client = OpenAI(api_key=OPENAI_KEY)
+
+def transcribe(file: str):
+    with open(file, "rb") as audio_file:
+        transcription = client.audio.transcriptions.create(
+            model="whisper-1", 
+            file=audio_file
+        )
+        return transcription.text
