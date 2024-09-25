@@ -1,4 +1,7 @@
 import React, { useState, useRef } from "react";
+import { Button }  from '@mui/material';
+import MicIcon from '@mui/icons-material/Mic';
+import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 
 function AudioRecorder({ setUserPrompt }: { setUserPrompt: React.Dispatch<React.SetStateAction<string>>}) {
   const [isRecording, setIsRecording] = useState(false);
@@ -63,9 +66,13 @@ function AudioRecorder({ setUserPrompt }: { setUserPrompt: React.Dispatch<React.
   return (
     <div>
       {isRecording ? (
-        <button onClick={stopRecording}>Stop Recording</button>
+        <Button onClick={stopRecording}>
+          <GraphicEqIcon>Stop</GraphicEqIcon>
+        </Button>
       ) : (
-        <button onClick={startRecording}>Start Recording</button>
+        <Button onClick={startRecording}>
+          <MicIcon>Start Recording</MicIcon>
+        </Button>
       )}
       {/* {audioUrl && (
         <div>

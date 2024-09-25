@@ -62,7 +62,7 @@ def upload_audio():
         return jsonify({"error": "No selected file"}), 400
 
     # Save the file to the uploads folder
-    file_path = os.path.join(r"/path/temp/", audio_file.filename)
+    file_path = os.path.join(r"/tmp", audio_file.filename)
     audio_file.save(file_path)
     
     prompt = transcribe(file_path)

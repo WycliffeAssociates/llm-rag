@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper } from '@mui/material';
 import Markdown from 'react-markdown'
+import AudioRecorder from './AudioRecorder';
 
 interface Message {
   text: string;
@@ -98,6 +99,7 @@ const ChatView = () => {
             width: '100%' // Ensure the form takes the full width
           }}
         >
+          <AudioRecorder setUserPrompt={setInputValue}/>
           <TextField
             sx={{ flexGrow: 1 }} // Allow the text field to stretch
             value={inputMessage}
