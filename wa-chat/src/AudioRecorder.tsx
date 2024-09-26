@@ -40,7 +40,7 @@ function AudioRecorder({ setUserPrompt }: { setUserPrompt: React.Dispatch<React.
     formData.append('audio', audioBlob, 'recording.wav');
 
     try {
-      const response = await fetch('http://localhost:80/upload-audio-command', {
+      const response = await fetch('https://llm-rag-server.walink.org/upload-audio-command', {
         method: 'POST',
         body: formData,
       });
