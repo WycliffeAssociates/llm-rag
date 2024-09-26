@@ -32,7 +32,7 @@ const ChatView = () => {
 
       setMessages([...messages, newUserMessage]);
 
-      fetch(`http://localhost:80/rag?prompt=${encodeURIComponent(userQuery)}`)
+      fetch(`https://llm-rag-server.walink.org/rag?prompt=${encodeURIComponent(userQuery)}`)
         .then(r => r.json())
         .then(res => {
           const responseText = res['rag-response'].response
@@ -45,7 +45,7 @@ const ChatView = () => {
           // setMessages([...messages, newsystemMessage]);
           setMessages(messages => [...messages, newsystemMessage]);
 
-          return fetch(`http://localhost:80/follow-up-questions`, {
+          return fetch(`https://llm-rag-server.walink.org/follow-up-questions`, {
             headers: {
               "Content-Type": "application/json",
             },
