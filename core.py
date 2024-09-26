@@ -80,6 +80,15 @@ def send_prompt_llm(prompt: str):
     ]
     return openAILM.invoke(messages).content
 
+def get_follow_up_questions(question: str, answer: str):
+    openAILM = ChatOpenAI(model="gpt-4o-mini", temperature=0.3, api_key=OPENAI_KEY)
+    messages = [
+        ("system", "Suggest three most-related follow-up questions that the user might ask after the conversation below, with the output format being an array of strings. If the question is irrelevant to the Biblical context, respond with an empty array."),
+        ("user", "Question: {0}\nAnswer: {1}".format(question, answer)),
+    ]
+
+    return openAILM.invoke(messages).content
+
 def extract_keywords(prompt: str):
     messages = [
         ("system", """
@@ -125,8 +134,8 @@ def send_prompt_experimental(question: str, system_prompt: str):
         | StrOutputParser()
     )
 
-    context_docs = retriever.get_relevant_documents(question)
-    context = format_docs(context_docs)
+    # context_docs = retriever.get_relevant_documents(question)
+    # context = format_docs(context_docs)
 
     answer = rag_chain.invoke(question)
 
@@ -137,28 +146,8 @@ def send_prompt_experimental(question: str, system_prompt: str):
 
     return {
         'response': answer,
-        'context': context
+        'context': ''
     }
-
-def eval_groundedness(question: str, context: str, answer: str):
-    # response = send_prompt_experimental(question, system_prompt)
-    
-    evaluation_prompt = """
-    Evaluate the response below. If the answer is based on the context, respond True. Otherwise, respond False:
-    
-    Question: {0}
-
-    Context: {1}
-
-    Answer: {2}
-    """.format(question, context, answer)
-    
-    messages = [
-        ("user", evaluation_prompt),
-    ]
-    
-    passed = llm.invoke(messages).content
-    print(passed)
     
 def eval_statement_of_faith(question: str, answer: str):
     # response = send_prompt_experimental(question, system_prompt)
@@ -186,7 +175,6 @@ def eval_statement_of_faith(question: str, answer: str):
     ]
     
     passed = llm.invoke(messages).content
-    print(passed)
 
     return passed == "True"
     
