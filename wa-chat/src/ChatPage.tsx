@@ -14,34 +14,49 @@ const ChatView = () => {
     { text: 'Hi there! How can I help you?', sender: 'system', timestamp: '10:01 AM' },
   ]);
   const [inputMessage, setInputValue] = useState('');
-
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
 
   const handleSend = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
+    const userQuery = inputMessage
 
-    if (inputMessage.trim() !== '') {
+    if (userQuery.trim() !== '') {
       setInputValue(''); // clear input after sending
+      setSuggestedPrompts([]);
 
       const newUserMessage: Message = {
-        text: inputMessage,
+        text: userQuery,
         sender: 'user',
         timestamp: new Date().toLocaleTimeString(),
       };
 
       setMessages([...messages, newUserMessage]);
 
-      fetch(`https://llm-rag-server.walink.org/rag?prompt=${encodeURIComponent(inputMessage)}`)
+      fetch(`https://llm-rag-server.walink.org/rag?prompt=${encodeURIComponent(userQuery)}`)
         .then(r => r.json())
         .then(res => {
-          const text = res['rag-response'].response
+          const responseText = res['rag-response'].response
           const newsystemMessage: Message = {
-            text: text,
+            text: responseText,
             sender: 'system',
             timestamp: new Date().toLocaleTimeString(),
           };
 
           // setMessages([...messages, newsystemMessage]);
           setMessages(messages => [...messages, newsystemMessage]);
+
+          return fetch(`https://llm-rag-server.walink.org/follow-up-questions`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: 'POST',
+            body: JSON.stringify({ question: userQuery, answer: responseText })
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          const followUpQuestions = Array.from<string>(data)
+          setSuggestedPrompts(followUpQuestions);
         });
     }
   };
@@ -64,7 +79,8 @@ const ChatView = () => {
               sx={{
                 display: 'flex',
                 justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                marginBottom: 1,
+                marginBottom: 2,
+                marginTop: 2
               }}
             >
               <Paper
@@ -87,7 +103,27 @@ const ChatView = () => {
             </Box>
           ))}
         </Box>
-
+        {/* Suggested prompts section */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap', // Allow the prompts to wrap if they overflow
+            gap: 1,
+            marginBottom: 2, // Add spacing between prompts and input area
+          }}
+        >
+          {suggestedPrompts.map((prompt, index) => (
+            <Button
+              key={index}
+              variant="outlined"
+              size="small"
+              onClick={() => setInputValue(prompt)}
+              sx={{ textTransform: 'none' }} // Prevent button text from being uppercase
+            >
+              {prompt}
+            </Button>
+          ))}
+        </Box>
         {/* Input area */}
         <Box
           component="form"
@@ -99,7 +135,7 @@ const ChatView = () => {
             width: '100%' // Ensure the form takes the full width
           }}
         >
-          <AudioRecorder setUserPrompt={setInputValue}/>
+          <AudioRecorder setUserPrompt={setInputValue} />
           <TextField
             sx={{ flexGrow: 1 }} // Allow the text field to stretch
             value={inputMessage}

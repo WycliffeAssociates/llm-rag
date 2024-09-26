@@ -4,7 +4,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, transcribe
+from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -50,6 +50,15 @@ def llm_endpoint():
         'llm-response' : send_prompt_llm(prompt)
     }
     return jsonify(response)
+
+@app.route('/follow-up-questions', methods=['POST'])
+def follow_up_questions():
+    request_json = request.json
+    question = request_json["question"]
+    answer = request_json["answer"]
+
+    response = get_follow_up_questions(question, answer)
+    return response
 
 @app.route('/upload-audio-command', methods=['POST'])
 def upload_audio():
