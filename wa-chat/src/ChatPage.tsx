@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper } from '@mui/material';
 import Markdown from 'react-markdown'
 import AudioRecorder from './AudioRecorder';
-
-interface Message {
-  text: string;
-  sender: 'user' | 'system';
-  timestamp: string;  // You could add other fields as needed
-}
+import { sendChatMessages } from './Api';
 
 const ChatView = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -15,10 +10,60 @@ const ChatView = () => {
   ]);
   const [inputMessage, setInputValue] = useState('');
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
+  const [summary, setSummary] = useState<string[]>([]);
+
+  const formatMessages = () => {
+    const chat: string[] = []; // user messages will have even indices; system messages will have odd indices
+
+    messages.slice(1).forEach(message => {
+      chat.push(message.text)
+    });
+    
+    return chat;
+  };
+
+  const sendMessages = (userQuery: string) => {
+    let latestResponse = messages[messages.length - 1].text;
+    if (messages.length === 1) {
+      latestResponse = "";
+    }
+    const chatData: ChatData = {
+      chat: summary,
+      lastResponse: latestResponse,
+      userQuery: inputMessage
+    };
+
+    sendChatMessages(chatData)
+    .then(res => {
+      setSummary(res['chat-summary']);
+      const responseText = res['rag-response'];
+
+      const newsystemMessage: Message = {
+        text: responseText,
+        sender: 'system',
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages(messages => [...messages, newsystemMessage]);
+
+      return fetch(`https://llm-rag-server.walink.org/follow-up-questions`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: 'POST',
+        body: JSON.stringify({ question: userQuery, answer: responseText })
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const followUpQuestions = Array.from<string>(data)
+      setSuggestedPrompts(followUpQuestions);
+    });
+  };
 
   const handleSend = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
-    const userQuery = inputMessage
+    const userQuery = inputMessage;
 
     if (userQuery.trim() !== '') {
       setInputValue(''); // clear input after sending
@@ -32,34 +77,13 @@ const ChatView = () => {
 
       setMessages([...messages, newUserMessage]);
 
-      fetch(`https://llm-rag-server.walink.org/rag?prompt=${encodeURIComponent(userQuery)}`)
-        .then(r => r.json())
-        .then(res => {
-          const responseText = res['rag-response'].response
-          const newsystemMessage: Message = {
-            text: responseText,
-            sender: 'system',
-            timestamp: new Date().toLocaleTimeString(),
-          };
-
-          // setMessages([...messages, newsystemMessage]);
-          setMessages(messages => [...messages, newsystemMessage]);
-
-          return fetch(`https://llm-rag-server.walink.org/follow-up-questions`, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: 'POST',
-            body: JSON.stringify({ question: userQuery, answer: responseText })
-          })
-        })
-        .then(res => res.json())
-        .then(data => {
-          const followUpQuestions = Array.from<string>(data)
-          setSuggestedPrompts(followUpQuestions);
-        });
+      return sendMessages(userQuery);
     }
   };
+
+  const debug = () => {
+    console.log(summary);
+  }
 
   return (
     <Container maxWidth='md'>
@@ -96,7 +120,7 @@ const ChatView = () => {
                   {message.sender === 'system' ?
                     <Markdown>{message.text}</Markdown>
                     :
-                    <div>{message.text}</div>
+                    <span>{message.text}</span>
                   }
                 </Typography>
               </Paper>
@@ -146,6 +170,7 @@ const ChatView = () => {
           <Button type='submit' variant="contained">
             Send
           </Button>
+          <Button onClick={debug}>DEBUG</Button>
         </Box>
       </Box>
     </Container>

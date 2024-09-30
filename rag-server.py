@@ -4,7 +4,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe
+from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe, summarize
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -59,6 +59,23 @@ def follow_up_questions():
 
     response = get_follow_up_questions(question, answer)
     return response
+
+@app.route('/message', methods=['POST'])
+def message():
+    request_json = request.json
+    user_query = request_json['userQuery']
+    lastResponse = request_json['lastResponse']
+    chat_summary = list(request_json['chat'])
+
+    new_response = send_prompt_experimental(user_query, system_prompt=default_system_prompt)['response']
+    if lastResponse != '':
+        summary = summarize(lastResponse)
+        chat_summary.append(summary)
+    
+    return jsonify({
+        'chat-summary': chat_summary,
+        'rag-response': new_response
+    })
 
 @app.route('/upload-audio-command', methods=['POST'])
 def upload_audio():

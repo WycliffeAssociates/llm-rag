@@ -177,7 +177,9 @@ def eval_statement_of_faith(question: str, answer: str):
     passed = llm.invoke(messages).content
 
     return passed == "True"
-    
+
+def summarize(content: str) -> str:
+    return llm.invoke(f"Briefly summarize the following chatbot response:\n{content}").content
 
 ### TRANSCRIPTION
 from openai import OpenAI
