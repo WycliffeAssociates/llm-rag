@@ -12,16 +12,6 @@ const ChatView = () => {
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const [summary, setSummary] = useState<string[]>([]);
 
-  const formatMessages = () => {
-    const chat: string[] = []; // user messages will have even indices; system messages will have odd indices
-
-    messages.slice(1).forEach(message => {
-      chat.push(message.text)
-    });
-    
-    return chat;
-  };
-
   const sendMessages = (userQuery: string) => {
     let latestResponse = messages[messages.length - 1].text;
     if (messages.length === 1) {
