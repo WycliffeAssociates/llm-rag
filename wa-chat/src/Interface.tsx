@@ -9,8 +9,3 @@ interface ChatData {
     lastResponse: string;
     userQuery: string;
 };
-
-interface ResponseData {
-    chat: [];
-    newResponse: {};
-}
