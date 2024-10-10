@@ -65,10 +65,6 @@ const ChatView = () => {
     }
   };
 
-  const debug = () => {
-    console.log(summary);
-  }
-
   return (
     <Container maxWidth='md'>
       <Box
@@ -154,7 +150,6 @@ const ChatView = () => {
           <Button type='submit' variant="contained">
             Send
           </Button>
-          <Button onClick={debug}>DEBUG</Button>
         </Box>
       </Box>
     </Container>
