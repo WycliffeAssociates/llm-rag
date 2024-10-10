@@ -67,15 +67,15 @@ def message():
     lastResponse = request_json['lastResponse']
     chat_summary = list(request_json['chat'])
 
-    if lastResponse != '':
-        summary = summarize(lastResponse)
-        chat_summary.append(summary)
+    # if lastResponse != '':
+    #     summary = summarize(lastResponse)
+    #     chat_summary.append(summary)
 
-    new_response = send_rag_chat(user_query, chat_summary)
-    chat_summary.append(user_query)
+    new_response = send_rag_chat(user_query, lastResponse)
+    # chat_summary.append(user_query)
     
     return jsonify({
-        'chat-summary': chat_summary,
+        'chat-summary': [],
         'rag-response': new_response
     })
 
@@ -90,7 +90,7 @@ def upload_audio():
         return jsonify({"error": "No selected file"}), 400
 
     # Save the file to the uploads folder
-    file_path = os.path.join(r"/tmp", audio_file.filename)
+    file_path = os.path.join(r"D:\misc\temp\voice", audio_file.filename)
     audio_file.save(file_path)
     
     prompt = transcribe(file_path)

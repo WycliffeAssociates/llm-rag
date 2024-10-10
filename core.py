@@ -135,6 +135,7 @@ def send_prompt_experimental(question: str, system_prompt: str):
     )
 
     answer = rag_chain.invoke(question)
+    context = format_docs(retriever.get_relevant_documents(question))
 
     if not eval_statement_of_faith(question, answer):
         answer = ""
@@ -142,26 +143,31 @@ def send_prompt_experimental(question: str, system_prompt: str):
 
     return {
         'response': answer,
-        'context': ''
+        'context': context
     }
+    
 
-def send_rag_chat(user_prompt: str, chat_summary: list[str]):
+def send_rag_chat(user_prompt: str, last_response: str):
     template = """
     You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona.
     Use the context if relevant to help formatting your answer. If the question is irrelevant to Biblical context and Bible translation, you can refuse to answer.
     
-    Chat history: {chat_summary}
-
     Context:
     {context}
-
+    
     Question: {question}
     """
     rag_prompt = ChatPromptTemplate.from_template(template)
+
+    # define context based on whether or not the question is about the last response
+    if is_chat_history_question(user_prompt, last_response):
+        context = lambda _: last_response
+    else:
+        context = retriever | prepend_docs
     
     # Chain
     rag_chain = (
-        {"context": retriever | prepend_docs, "question": RunnablePassthrough(), "chat_summary": lambda _: "\n".join(chat_summary) }
+        {"context": context, "question": RunnablePassthrough() }
         | rag_prompt
         | llm
         | StrOutputParser()
@@ -169,8 +175,8 @@ def send_rag_chat(user_prompt: str, chat_summary: list[str]):
 
     answer = rag_chain.invoke(user_prompt)
 
-    # if not eval_statement_of_faith(user_prompt, answer):
-    #     answer = ""
+    if not eval_statement_of_faith(user_prompt, answer):
+        answer = ""
 
     return answer
 
@@ -206,6 +212,13 @@ def eval_statement_of_faith(question: str, answer: str):
 def summarize(content: str) -> str:
     summary_agent = ChatOpenAI(temperature=0.3, api_key=OPENAI_KEY)
     return summary_agent.invoke(f"Capture the most important points from the following paragraph and concisely format your response as bullet points: \n{content}").content
+
+def is_chat_history_question(question: str, prev_response: str):
+    detect_agent = ChatOpenAI(temperature=0, api_key=OPENAI_KEY)
+    p = f'Evaluate the question below, response "True" if it is a question about the previous response. Otherwise, response "False" if it is a new question: \n```Previous response:\n {prev_response}```\n```Question: {question}```'
+    res = detect_agent.invoke(p).content
+    return res == "True"
+
 
 ### TRANSCRIPTION
 from openai import OpenAI

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper } from '@mui/material';
 import Markdown from 'react-markdown'
 import AudioRecorder from './AudioRecorder';
-import { sendChatMessages } from './Api';
+import { getFollowUpQuestions, sendChatMessages } from './Api';
 
 const ChatView = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -36,13 +36,7 @@ const ChatView = () => {
 
       setMessages(messages => [...messages, newsystemMessage]);
 
-      return fetch(`https://llm-rag-server.walink.org/follow-up-questions`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: 'POST',
-        body: JSON.stringify({ question: userQuery, answer: responseText })
-      })
+      return getFollowUpQuestions(userQuery, responseText);
     })
     .then(res => res.json())
     .then(data => {
