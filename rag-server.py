@@ -4,7 +4,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe
+from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe, summarize, send_rag_chat
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -60,6 +60,25 @@ def follow_up_questions():
     response = get_follow_up_questions(question, answer)
     return response
 
+@app.route('/message', methods=['POST'])
+def message():
+    request_json = request.json
+    user_query = request_json['userQuery']
+    lastResponse = request_json['lastResponse']
+    chat_summary = list(request_json['chat'])
+
+    # if lastResponse != '':
+    #     summary = summarize(lastResponse)
+    #     chat_summary.append(summary)
+
+    new_response = send_rag_chat(user_query, lastResponse)
+    # chat_summary.append(user_query)
+    
+    return jsonify({
+        'chat-summary': [],
+        'rag-response': new_response
+    })
+
 @app.route('/upload-audio-command', methods=['POST'])
 def upload_audio():
     if 'audio' not in request.files:
@@ -71,7 +90,7 @@ def upload_audio():
         return jsonify({"error": "No selected file"}), 400
 
     # Save the file to the uploads folder
-    file_path = os.path.join(r"/tmp", audio_file.filename)
+    file_path = os.path.join(r"D:\misc\temp\voice", audio_file.filename)
     audio_file.save(file_path)
     
     prompt = transcribe(file_path)

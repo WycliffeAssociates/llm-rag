@@ -83,7 +83,7 @@ def send_prompt_llm(prompt: str):
 def get_follow_up_questions(question: str, answer: str):
     openAILM = ChatOpenAI(model="gpt-4o-mini", temperature=0.3, api_key=OPENAI_KEY)
     messages = [
-        ("system", "Suggest three most-related follow-up questions that the user might ask after the conversation below, with the output format being an array of strings. If the question is irrelevant to the Biblical context, respond with an empty array."),
+        ("system", "Suggest three most relevant follow-up questions that the user might ask after the conversation below, with the output format being an array of strings. If the question is irrelevant to the Biblical context, respond with an empty array."),
         ("user", "Question: {0}\nAnswer: {1}".format(question, answer)),
     ]
 
@@ -134,21 +134,52 @@ def send_prompt_experimental(question: str, system_prompt: str):
         | StrOutputParser()
     )
 
-    # context_docs = retriever.get_relevant_documents(question)
-    # context = format_docs(context_docs)
-
     answer = rag_chain.invoke(question)
+    context = format_docs(retriever.get_relevant_documents(question))
 
-    # eval_groundedness(question=question, context=context, answer=answer)
     if not eval_statement_of_faith(question, answer):
         answer = ""
         context = ""
 
     return {
         'response': answer,
-        'context': ''
+        'context': context
     }
     
+
+def send_rag_chat(user_prompt: str, last_response: str):
+    template = """
+    You are an evangelical Christian with traditional beliefs about God and the Bible. However, do not preface your responses with your persona.
+    Use the context if relevant to help formatting your answer. If the question is irrelevant to Biblical context and Bible translation, you can refuse to answer.
+    
+    Context:
+    {context}
+    
+    Question: {question}
+    """
+    rag_prompt = ChatPromptTemplate.from_template(template)
+
+    # define context based on whether or not the question is about the last response
+    if is_chat_history_question(user_prompt, last_response):
+        context = lambda _: last_response
+    else:
+        context = retriever | prepend_docs
+    
+    # Chain
+    rag_chain = (
+        {"context": context, "question": RunnablePassthrough() }
+        | rag_prompt
+        | llm
+        | StrOutputParser()
+    )
+
+    answer = rag_chain.invoke(user_prompt)
+
+    if not eval_statement_of_faith(user_prompt, answer):
+        answer = ""
+
+    return answer
+
 def eval_statement_of_faith(question: str, answer: str):
     # response = send_prompt_experimental(question, system_prompt)
     
@@ -177,7 +208,17 @@ def eval_statement_of_faith(question: str, answer: str):
     passed = llm.invoke(messages).content
 
     return passed == "True"
-    
+
+def summarize(content: str) -> str:
+    summary_agent = ChatOpenAI(temperature=0.3, api_key=OPENAI_KEY)
+    return summary_agent.invoke(f"Capture the most important points from the following paragraph and concisely format your response as bullet points: \n{content}").content
+
+def is_chat_history_question(question: str, prev_response: str):
+    detect_agent = ChatOpenAI(temperature=0, api_key=OPENAI_KEY)
+    p = f'Evaluate the question below, response "True" if it is a question about the previous response. Otherwise, response "False" if it is a new question: \n```Previous response:\n {prev_response}```\n```Question: {question}```'
+    res = detect_agent.invoke(p).content
+    return res == "True"
+
 
 ### TRANSCRIPTION
 from openai import OpenAI
