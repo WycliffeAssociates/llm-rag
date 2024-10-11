@@ -7,6 +7,9 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       DB_PATH: "/server/database"
       DATA_SOURCE_DIR: "/server/data-sources"
+      LOG_DIR: "/logs"
+    volumes:
+      - ./logs:/logs
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.llm-rag-server.rule=Host(`$DNS_NAME_SERVER`)"
