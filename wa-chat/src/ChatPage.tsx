@@ -151,6 +151,7 @@ const ChatView = () => {
             Send
           </Button>
         </Box>
+        <Box><Typography variant="body2" color="textSecondary" sx={{ paddingTop: '10px', textAlign: 'center', fontStyle: 'italic' }}>This chat is recorded for research and development purposes only.</Typography></Box>
       </Box>
     </Container>
   );
