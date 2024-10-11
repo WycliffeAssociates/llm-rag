@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper } from '@mui/material';
 import Markdown from 'react-markdown'
 import AudioRecorder from './AudioRecorder';
 import { getFollowUpQuestions, sendChatMessages } from './Api';
 
 const ChatView = () => {
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     { text: 'Hi there! How can I help you?', sender: 'system', timestamp: '10:01 AM' },
   ]);
@@ -65,6 +66,16 @@ const ChatView = () => {
     }
   };
 
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <Container maxWidth='md'>
       <Box
@@ -106,6 +117,7 @@ const ChatView = () => {
               </Paper>
             </Box>
           ))}
+          <div ref={messagesEndRef}></div>
         </Box>
         {/* Suggested prompts section */}
         <Box
