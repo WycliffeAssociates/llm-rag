@@ -4,7 +4,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from core import send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe, summarize, send_rag_chat
+from core import LOG_FILE, send_prompt_rag_plain, send_prompt_llm, send_prompt_experimental, get_follow_up_questions, transcribe, summarize, send_rag_chat
 # from glossary import get_dictionary_tw
 
 app = Flask(__name__)
@@ -73,6 +73,8 @@ def message():
 
     new_response = send_rag_chat(user_query, lastResponse)
     # chat_summary.append(user_query)
+
+    log_message(user=user_query, system=new_response)
     
     return jsonify({
         'chat-summary': [],
@@ -99,6 +101,25 @@ def upload_audio():
 
     return jsonify({"prompt": prompt }), 200
 
+import threading
+
+file_lock = threading.Lock()
+
+def log_message(user: str, system: str):
+    with file_lock:
+        try:
+            # Check if the file exists, and read the current logs
+            if not os.path.exists(LOG_FILE):
+                with open(LOG_FILE, 'w') as _:
+                    pass
+
+            with open(LOG_FILE, 'a') as file:
+                message = f'<User>: {user}\n<System>: {system}\n\n==================================\n\n'
+                file.write(message)
+                print(message)
+
+        except Exception as e:
+            print(f"Error logging message: {e}")
 
 if __name__ == '__main__':
     # app.run(debug=True)
