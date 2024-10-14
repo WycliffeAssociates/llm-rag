@@ -9,11 +9,13 @@ else:
     config['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
     config['DATA_SOURCE_DIR'] = os.getenv('DATA_SOURCE_DIR')
     config['DB_PATH'] = os.getenv('DB_PATH')
+    config["LOG_DIR"] = os.getenv('LOG_DIR')
 
 # Const values
 OPENAI_KEY = config['OPENAI_API_KEY']
 DB_PATH = config["DB_PATH"]
 DATA_SOURCE_DIR = config["DATA_SOURCE_DIR"]
+LOG_DIR = config["LOG_DIR"]
 
 #### INDEXING ####
 from langchain_community.document_loaders import TextLoader
