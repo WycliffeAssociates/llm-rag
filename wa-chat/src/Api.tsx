@@ -1,6 +1,6 @@
 
 export const sendChatMessages = (data: ChatData) => {
-    return fetch(`http://localhost:80/message`, {
+    return fetch(`https://llm-rag-server.walink.org/message`, {
         headers: {
           "Content-Type": "application/json",
         },
