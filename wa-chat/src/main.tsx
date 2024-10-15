@@ -11,7 +11,8 @@ const Main = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RagComparison/>} />
+        <Route path="/" element={<ChatView/>} />
+        <Route path="/compare" element={<RagComparison/>} />
         <Route path="/experiment" element={<RagExperiment/>} />
         <Route path="/chat" element={<ChatView/>} />
       </Routes>
