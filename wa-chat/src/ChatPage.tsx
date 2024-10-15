@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Box, Container, Typography, TextField, Button, Paper } from '@mui/material';
+import { Box, CircularProgress, Container, Typography, TextField, Button, Paper } from '@mui/material';
 import Markdown from 'react-markdown'
 import AudioRecorder from './AudioRecorder';
 import { getFollowUpQuestions, sendChatMessages } from './Api';
 
-const ChatView = () => {
+const ChatView = ({ logging }: { logging: boolean }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     { text: 'Hi there! How can I help you?', sender: 'system', timestamp: '10:01 AM' },
@@ -12,19 +12,23 @@ const ChatView = () => {
   const [inputMessage, setInputValue] = useState('');
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const [summary, setSummary] = useState<string[]>([]);
+  const [isWaitingForSystemMessage, setIsWaitingForSystemMessage] = useState(false);
 
   const sendMessages = (userQuery: string) => {
     let latestResponse = messages[messages.length - 1].text;
     if (messages.length === 1) {
       latestResponse = "";
     }
+    
     const chatData: ChatData = {
       chat: summary,
       lastResponse: latestResponse,
       userQuery: inputMessage
     };
 
-    sendChatMessages(chatData)
+    setIsWaitingForSystemMessage(true);
+    
+    sendChatMessages(chatData, logging)
     .then(res => {
       setSummary(res['chat-summary']);
       const responseText = res['rag-response'];
@@ -37,13 +41,16 @@ const ChatView = () => {
 
       setMessages(messages => [...messages, newsystemMessage]);
 
+      setIsWaitingForSystemMessage(false);
+
       return getFollowUpQuestions(userQuery, responseText);
     })
     .then(res => res.json())
     .then(data => {
       const followUpQuestions = Array.from<string>(data)
       setSuggestedPrompts(followUpQuestions);
-    });
+    })
+    .finally(() => setIsWaitingForSystemMessage(false));
   };
 
   const handleSend = (event: { preventDefault: () => void; }) => {
@@ -117,6 +124,30 @@ const ChatView = () => {
               </Paper>
             </Box>
           ))}
+          {/* Show spinner when waiting for system message */}
+          {isWaitingForSystemMessage && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                padding: '10px 0',
+              }}
+            >
+              <Paper
+                elevation={1}
+                sx={{
+                  padding: '15px 25px',
+                  maxWidth: '60%',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: 2
+                }}
+              >
+                <CircularProgress size={30} />
+              </Paper>
+            </Box>
+          )}
+
+          {/* Empty div to mark the end of the chat messages for scrolling */}
           <div ref={messagesEndRef}></div>
         </Box>
         {/* Suggested prompts section */}

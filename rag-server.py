@@ -65,16 +65,11 @@ def message():
     request_json = request.json
     user_query = request_json['userQuery']
     lastResponse = request_json['lastResponse']
-    chat_summary = list(request_json['chat'])
-
-    # if lastResponse != '':
-    #     summary = summarize(lastResponse)
-    #     chat_summary.append(summary)
 
     new_response = send_rag_chat(user_query, lastResponse)
-    # chat_summary.append(user_query)
 
-    log_message(user=user_query, system=new_response)
+    if request.args.get('logging', '') != '':
+        log_message(user=user_query, system=new_response)
     
     return jsonify({
         'chat-summary': [],

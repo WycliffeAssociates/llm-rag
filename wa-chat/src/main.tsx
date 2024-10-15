@@ -11,9 +11,10 @@ const Main = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RagComparison/>} />
+        <Route path="/" element={<ChatView logging={true}/>} />
+        <Route path="/compare" element={<RagComparison/>} />
         <Route path="/experiment" element={<RagExperiment/>} />
-        <Route path="/chat" element={<ChatView/>} />
+        <Route path="/chat" element={<ChatView logging={false}/>} />
       </Routes>
     </Router>
   );
