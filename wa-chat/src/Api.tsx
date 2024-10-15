@@ -1,6 +1,6 @@
 
-export const sendChatMessages = (data: ChatData) => {
-    return fetch(`https://llm-rag-server.walink.org/message`, {
+export const sendChatMessages = (data: ChatData, logging: boolean = false) => {
+    return fetch(`https://llm-rag-server.walink.org/message${logging ? '?logging=true' : ''}`, {
         headers: {
           "Content-Type": "application/json",
         },

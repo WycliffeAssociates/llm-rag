@@ -4,7 +4,7 @@ import Markdown from 'react-markdown'
 import AudioRecorder from './AudioRecorder';
 import { getFollowUpQuestions, sendChatMessages } from './Api';
 
-const ChatView = () => {
+const ChatView = ({ logging }: { logging: boolean }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     { text: 'Hi there! How can I help you?', sender: 'system', timestamp: '10:01 AM' },
@@ -28,7 +28,7 @@ const ChatView = () => {
 
     setIsWaitingForSystemMessage(true);
     
-    sendChatMessages(chatData)
+    sendChatMessages(chatData, logging)
     .then(res => {
       setSummary(res['chat-summary']);
       const responseText = res['rag-response'];
