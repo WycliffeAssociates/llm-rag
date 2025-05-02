@@ -1,6 +1,6 @@
 
 export const sendChatMessages = (data: ChatData, logging: boolean = false) => {
-    return fetch(`https://llm-rag-server.walink.org/message${logging ? '?logging=true' : ''}`, {
+    return fetch(`http://localhost:80/message${logging ? '?logging=true' : ''}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -17,3 +17,14 @@ export const getFollowUpQuestions = (userQuery: string, responseText: string) =>
   method: 'POST',
   body: JSON.stringify({ question: userQuery, answer: responseText })
 });
+
+export const sendWikiMessage = (data: WikiMessage) => {
+  return fetch(`http://192.168.144.158:8000/wiki-message`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json());
+};

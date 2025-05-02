@@ -9,3 +9,8 @@ interface ChatData {
     lastResponse: string;
     userQuery: string;
 };
+
+interface WikiMessage {
+    lastResponse: string;
+    userQuery: string;
+};

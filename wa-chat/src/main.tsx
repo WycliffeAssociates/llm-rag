@@ -5,6 +5,7 @@ import RagExperiment from './App.tsx'
 import RagComparison from './RAG-Comparison.tsx'
 import './index.css'
 import ChatView from './ChatPage.tsx';
+import WikiChatView from './WikiChatView.tsx';
 
 
 const Main = () => {
@@ -15,6 +16,7 @@ const Main = () => {
         <Route path="/compare" element={<RagComparison/>} />
         <Route path="/experiment" element={<RagExperiment/>} />
         <Route path="/chat" element={<ChatView logging={false}/>} />
+        <Route path="/wiki" element={<WikiChatView logging={false}/>} />
       </Routes>
     </Router>
   );

@@ -25,7 +25,7 @@ const RagExperiment = () => {
     try {
 
       const response = await fetch(
-        `https://llm-rag-server.walink.org/rag-system-prompt?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
+        `http://localhost:80/rag-system-prompt?user-prompt=${encodeURIComponent(prompt)}&system-prompt=${encodeURIComponent(systemPrompt)}`
       );
 
       if (!response.ok) {

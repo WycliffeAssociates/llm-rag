@@ -1,0 +1,208 @@
+import { useState, useEffect, useRef } from 'react';
+import { Box, CircularProgress, Container, Typography, TextField, Button, Paper } from '@mui/material';
+import Markdown from 'react-markdown'
+import AudioRecorder from './AudioRecorder';
+import { getFollowUpQuestions, sendChatMessages, sendWikiMessage } from './Api';
+
+const WikiChatView = ({ logging }: { logging: boolean }) => {
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([
+    { text: 'Welcome to Wiki! How can I help you?', sender: 'system', timestamp: '10:01 AM' },
+  ]);
+  const [inputMessage, setInputValue] = useState('');
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
+  const [summary, setSummary] = useState<string[]>([]);
+  const [isWaitingForSystemMessage, setIsWaitingForSystemMessage] = useState(false);
+
+  const sendMessages = (userQuery: string) => {
+    let latestResponse = messages[messages.length - 1].text;
+    if (messages.length === 1) {
+      latestResponse = "";
+    }
+    
+    const chatData: ChatData = {
+      chat: summary,
+      lastResponse: latestResponse,
+      userQuery: inputMessage
+    };
+
+    setIsWaitingForSystemMessage(true);
+    
+    sendWikiMessage(chatData)
+    .then(res => {
+    //   setSummary(res['chat-summary']);
+      let responseText = res['rag-response'];
+      const context = res['context'];
+      context.forEach((c: any) => {
+        responseText += `\n\n\n*Source:*\n\`\`\`\n${c["metadata"]["source"]}\n\`\`\``;
+      });
+      console.log("Response from server: ", res['context']);
+
+      const newsystemMessage: Message = {
+        text: responseText,
+        sender: 'system',
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages(messages => [...messages, newsystemMessage]);
+
+      setIsWaitingForSystemMessage(false);
+
+    //   return getFollowUpQuestions(userQuery, responseText);
+    })
+    // .then(res => res.json())
+    // .then(data => {
+    //   const followUpQuestions = Array.from<string>(data)
+    //   setSuggestedPrompts(followUpQuestions);
+    // })
+    .finally(() => setIsWaitingForSystemMessage(false));
+  };
+
+  const handleSend = (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    const userQuery = inputMessage;
+
+    if (userQuery.trim() !== '') {
+      setInputValue(''); // clear input after sending
+      setSuggestedPrompts([]);
+
+      const newUserMessage: Message = {
+        text: userQuery,
+        sender: 'user',
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages([...messages, newUserMessage]);
+
+      return sendMessages(userQuery);
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  return (
+    <Container maxWidth='md'>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          height: '98vh'
+        }}
+      >
+        {/* Chat messages */}
+        <Box sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: 2 }}>
+          {messages.map((message, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
+                marginBottom: 2,
+                marginTop: 2
+              }}
+            >
+              <Paper
+                elevation={1}
+                sx={{
+                  padding: '10px 20px',
+                  maxWidth: '60%',
+                  backgroundColor: message.sender === 'user' ? '#e3f2fd' : '#f5f5f5',
+                  borderRadius: message.sender === 'user' ? 8 : 2
+                }}
+              >
+                <Typography variant="body1">
+                  {message.sender === 'system' ?
+                    <Markdown>{message.text}</Markdown>
+                    :
+                    <span>{message.text}</span>
+                  }
+                </Typography>
+              </Paper>
+            </Box>
+          ))}
+          {/* Show spinner when waiting for system message */}
+          {isWaitingForSystemMessage && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                padding: '10px 0',
+              }}
+            >
+              <Paper
+                elevation={1}
+                sx={{
+                  padding: '15px 25px',
+                  maxWidth: '60%',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: 2
+                }}
+              >
+                <CircularProgress size={30} />
+              </Paper>
+            </Box>
+          )}
+
+          {/* Empty div to mark the end of the chat messages for scrolling */}
+          <div ref={messagesEndRef}></div>
+        </Box>
+        {/* Suggested prompts section */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap', // Allow the prompts to wrap if they overflow
+            gap: 1,
+            marginBottom: 2, // Add spacing between prompts and input area
+          }}
+        >
+          {suggestedPrompts.map((prompt, index) => (
+            <Button
+              key={index}
+              variant="outlined"
+              size="small"
+              onClick={() => setInputValue(prompt)}
+              sx={{ textTransform: 'none' }} // Prevent button text from being uppercase
+            >
+              {prompt}
+            </Button>
+          ))}
+        </Box>
+        {/* Input area */}
+        <Box
+          component="form"
+          onSubmit={handleSend}
+          sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center', // Align items horizontally
+            width: '100%' // Ensure the form takes the full width
+          }}
+        >
+          {/* <AudioRecorder setUserPrompt={setInputValue} /> */}
+          <TextField
+            sx={{ flexGrow: 1 }} // Allow the text field to stretch
+            value={inputMessage}
+            onChange={(e) => setInputValue(e.target.value)}
+            label="Type a message"
+            variant="outlined"
+          />
+          <Button type='submit' variant="contained">
+            Send
+          </Button>
+        </Box>
+        <Box><Typography variant="body2" color="textSecondary" sx={{ paddingTop: '10px', textAlign: 'center', fontStyle: 'italic' }}>This chat is recorded for research and development purposes only.</Typography></Box>
+      </Box>
+    </Container>
+  );
+};
+
+export default WikiChatView;

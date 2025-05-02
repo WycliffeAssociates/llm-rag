@@ -22,28 +22,36 @@ const RagComparison = () => {
   const fetchData = async (prompt: string) => {
     try {
 
-      const response = await fetch(`https://llm-rag-server.walink.org/rag-compare?prompt=${encodeURIComponent(prompt)}`);
+      // const response = await fetch(`http://localhost:80/rag-compare?prompt=${encodeURIComponent(prompt)}`);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
+      // if (!response.ok) {
+      //   throw new Error('Network response was not ok');
+      // }      if (!response.ok) {
+      //   throw new Error('Network response was not ok');
+      // }
+      // const result = await response.json();
 
-      setLlmOutput(result['llm-response']);
-      setRagOutput(result['rag-response'].response);
-    //   setKeyWords(result['tw']);
+      const first = fetch(`http://localhost:80/rag?prompt=${encodeURIComponent(prompt)}`)
+      .then(r => r.json())
+      .then(res => {
+        setRagOutput(res['rag-response'].response);
+        const combinedContext = res['rag-response'].context
+        setContext(combinedContext)
+      });
 
-      const combinedContext = result['rag-response'].context
-      
-      setContext(combinedContext)
+      const second = fetch(`http://localhost:80/llm?prompt=${encodeURIComponent(prompt)}`)
+      .then(r => r.json())
+      .then(res => {
+        setLlmOutput(res['llm-response']);
+      });
 
+      Promise.all([first, second])
+        .finally(() => {
+          setLoading(false);
+        })
 
     } catch (error) {
       console.log(error)
-    } finally {
-      setLoading(false);
     }
   };
 
